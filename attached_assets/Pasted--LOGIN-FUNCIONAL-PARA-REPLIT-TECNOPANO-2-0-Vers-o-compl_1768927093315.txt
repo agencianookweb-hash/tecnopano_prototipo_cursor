@@ -1,0 +1,1033 @@
+# 🔐 LOGIN FUNCIONAL PARA REPLIT - TECNOPANO 2.0
+
+> **Versão completa e funcional** - Copie e cole direto no Replit
+
+---
+
+## 📁 ESTRUTURA DE ARQUIVOS
+
+```
+src/
+├── pages/
+│   └── auth/
+│       ├── Login.tsx          ← Componente principal
+│       └── Login.css          ← Estilos
+├── hooks/
+│   └── useAuth.tsx            ← Hook de autenticação
+├── services/
+│   ├── api.ts                 ← Configuração Axios
+│   └── auth.service.ts        ← Serviço de autenticação
+└── App.tsx                    ← Provider de Auth
+```
+
+---
+
+## 1️⃣ src/pages/auth/Login.tsx
+
+```typescript
+import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { Mail, Lock, Shield } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import './Login.css';
+
+export default function Login() {
+  const { login } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [twoFactorMethod, setTwoFactorMethod] = useState<'sms' | 'app'>('app');
+  const [show2FA, setShow2FA] = useState(false);
+  const [twoFAMethods, setTwoFAMethods] = useState<{ sms: boolean; app: boolean }>({ sms: false, app: false });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      await login(
+        email, 
+        password, 
+        show2FA ? twoFactorCode : undefined,
+        show2FA ? twoFactorMethod : undefined
+      );
+      toast.success('Login realizado com sucesso!');
+    } catch (error: any) {
+      if (error.response?.data?.requires2FA) {
+        setTwoFAMethods(error.response.data.methods || { sms: false, app: false });
+        setShow2FA(true);
+        if (error.response.data.methods?.app) {
+          setTwoFactorMethod('app');
+        } else if (error.response.data.methods?.sms) {
+          setTwoFactorMethod('sms');
+        }
+        toast.error('Código 2FA necessário');
+      } else {
+        const errorMsg = error.response?.data?.message || error.message || 'Erro ao fazer login';
+        setError(errorMsg);
+        toast.error(errorMsg);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="login-container">
+      <div className="login-card">
+        {/* Logo */}
+        <div className="login-logo">
+          <div className="logo-icon">
+            <span className="text-4xl font-bold text-primary">T</span>
+          </div>
+          <h1>TECNOPANO</h1>
+          <p>Sistema de Gestão Industrial</p>
+        </div>
+
+        {/* Formulário */}
+        <form onSubmit={handleSubmit} className="login-form">
+          {error && <div className="error-message">{error}</div>}
+
+          <div className="form-group">
+            <label htmlFor="email" className="form-label">
+              <Mail className="w-4 h-4" />
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              placeholder="seu@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="form-input"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password" className="form-label">
+              <Lock className="w-4 h-4" />
+              Senha
+            </label>
+            <input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="form-input"
+              disabled={loading}
+            />
+          </div>
+
+          {/* 2FA Section */}
+          {show2FA && (
+            <div className="space-y-4 pt-4 border-t border-white/10">
+              {(twoFAMethods.sms || twoFAMethods.app) && (
+                <div>
+                  <label className="form-label">
+                    <Shield className="w-4 h-4" />
+                    Método de Autenticação:
+                  </label>
+                  <div className="flex gap-3">
+                    {twoFAMethods.app && (
+                      <button
+                        type="button"
+                        onClick={() => setTwoFactorMethod('app')}
+                        className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all font-medium ${
+                          twoFactorMethod === 'app'
+                            ? 'border-primary bg-primary/20 text-primary'
+                            : 'border-white/10 bg-white/5 text-text-secondary hover:border-white/20'
+                        }`}
+                      >
+                        App Autenticador
+                      </button>
+                    )}
+                    {twoFAMethods.sms && (
+                      <button
+                        type="button"
+                        onClick={() => setTwoFactorMethod('sms')}
+                        className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all font-medium ${
+                          twoFactorMethod === 'sms'
+                            ? 'border-primary bg-primary/20 text-primary'
+                            : 'border-white/10 bg-white/5 text-text-secondary hover:border-white/20'
+                        }`}
+                      >
+                        SMS
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+              <div className="form-group">
+                <label className="form-label">
+                  <Shield className="w-4 h-4" />
+                  {twoFactorMethod === 'sms' ? 'Código SMS' : 'Código do App Autenticador'}
+                </label>
+                <input
+                  type="text"
+                  placeholder="000000"
+                  value={twoFactorCode}
+                  onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  required
+                  className="form-input"
+                  maxLength={6}
+                  disabled={loading}
+                />
+              </div>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-login"
+          >
+            {loading ? 'Entrando...' : 'Entrar'}
+          </button>
+        </form>
+
+        {/* Footer */}
+        <div className="login-footer">
+          <p>
+            <Shield className="w-3 h-3" />
+            Sistema seguro com autenticação de dois fatores
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## 2️⃣ src/pages/auth/Login.css
+
+```css
+/* Variáveis de Cor */
+:root {
+  --bg-primary: #0F0F0F;
+  --bg-secondary: #1A1A1A;
+  --glass-light: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --red-primary: #FF073A;
+  --red-dark: #B20028;
+  --red-light: #FF4757;
+  --text-primary: #E0E0E0;
+  --text-secondary: #A0A0A0;
+  --white: #FFFFFF;
+}
+
+/* Container Principal */
+.login-container {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 50%, #f0f0f0 100%);
+  width: 100% !important;
+  height: 100vh !important;
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle, rgba(150, 150, 150, 0.4) 1px, transparent 1px);
+  background-size: 12px 12px;
+  background-position: 0 0, 6px 6px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+/* Card de Login */
+.login-card {
+  position: relative !important;
+  z-index: 100 !important;
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  background: rgba(26, 26, 26, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 24px;
+  backdrop-filter: blur(30px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  animation: slideIn 0.6s ease-out;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.login-card:hover {
+  border-color: rgba(255, 7, 58, 0.5) !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(255, 7, 58, 0.3),
+    0 0 40px rgba(255, 7, 58, 0.2);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Logo */
+.login-logo {
+  text-align: center;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.logo-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--red-primary), var(--red-dark));
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(255, 7, 58, 0.4);
+  margin-bottom: 16px;
+}
+
+.login-logo h1 {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.login-logo p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Formulário */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Grupo de Formulário */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-label svg {
+  color: var(--red-primary);
+}
+
+/* Input */
+.form-input {
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.form-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.form-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--red-primary);
+  box-shadow: 
+    0 0 0 3px rgba(255, 7, 58, 0.1),
+    0 0 20px rgba(255, 7, 58, 0.3);
+}
+
+.form-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Botão de Login */
+.btn-login {
+  padding: 12px 24px;
+  background: linear-gradient(to right, var(--red-primary), var(--red-dark));
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 15px rgba(255, 7, 58, 0.4),
+    0 0 20px rgba(255, 7, 58, 0.3);
+  margin-top: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-login::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-login:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.btn-login:hover:not(:disabled) {
+  background: linear-gradient(to right, var(--red-light), var(--red-primary));
+  box-shadow: 
+    0 6px 20px rgba(255, 7, 58, 0.6),
+    0 0 30px rgba(255, 7, 58, 0.4);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.btn-login:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-login:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Mensagem de Erro */
+.error-message {
+  padding: 12px 16px;
+  background: rgba(255, 7, 58, 0.1);
+  border: 1px solid rgba(255, 7, 58, 0.3);
+  border-radius: 8px;
+  color: var(--red-light);
+  font-size: 13px;
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Footer */
+.login-footer {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.login-footer p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.login-footer svg {
+  color: var(--red-primary);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .login-card {
+    margin: 20px;
+    max-width: 100%;
+    padding: 32px 24px;
+  }
+
+  .login-logo h1 {
+    font-size: 24px;
+  }
+
+  .login-logo p {
+    font-size: 11px;
+  }
+
+  .form-input {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 24px 16px;
+  }
+
+  .login-logo {
+    margin-bottom: 32px;
+  }
+
+  .logo-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .login-logo h1 {
+    font-size: 20px;
+  }
+}
+```
+
+---
+
+## 3️⃣ src/hooks/useAuth.tsx
+
+```typescript
+import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { authService, AuthResponse } from '@/services/auth.service';
+import { useNavigate } from 'react-router-dom';
+
+interface User {
+  id: string;
+  email: string;
+  fullName: string;
+  profile: string;
+  twoFactorEnabled: boolean;
+}
+
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+  login: (email: string, password: string, twoFactorCode?: string, twoFactorMethod?: 'sms' | 'app') => Promise<void>;
+  logout: () => Promise<void>;
+  isAuthenticated: boolean;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        try {
+          setUser(JSON.parse(userData));
+        } catch (e) {
+          console.error('Erro ao parsear user:', e);
+        }
+      }
+    }
+    setLoading(false);
+  };
+
+  const login = async (email: string, password: string, twoFactorCode?: string, twoFactorMethod?: 'sms' | 'app') => {
+    try {
+      const response: AuthResponse = await authService.login({
+        email,
+        password,
+        twoFactorCode,
+        twoFactorMethod,
+      });
+
+      localStorage.setItem('access_token', response.access_token);
+      localStorage.setItem('refresh_token', response.refresh_token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+
+      setUser(response.user);
+
+      // Redirecionar baseado no perfil
+      const profileRoutes: Record<string, string> = {
+        SUPER_ADMIN: '/dashboard',
+        ADMIN: '/dashboard',
+        GALPAO: '/galpao',
+        EXPEDICAO: '/expedicao',
+        FINANCEIRO: '/financeiro',
+        EMISSAO_NF: '/emissao-nf',
+        MOTORISTA: '/motorista',
+        COSTUREIRA: '/costureira',
+      };
+
+      navigate(profileRoutes[response.user.profile] || '/dashboard');
+    } catch (error: any) {
+      throw error;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    } finally {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
+      setUser(null);
+      navigate('/login');
+    }
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        logout,
+        isAuthenticated: !!user,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth deve ser usado dentro de AuthProvider');
+  }
+  return context;
+}
+```
+
+---
+
+## 4️⃣ src/services/api.ts
+
+```typescript
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+
+export const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: 10000,
+});
+
+// Interceptor para adicionar token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor para refresh token
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const refreshToken = localStorage.getItem('refresh_token');
+        if (refreshToken) {
+          const response = await axios.post(`${API_URL}/auth/refresh`, {
+            refresh_token: refreshToken,
+          });
+
+          const { access_token } = response.data;
+          localStorage.setItem('access_token', access_token);
+
+          originalRequest.headers.Authorization = `Bearer ${access_token}`;
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default api;
+```
+
+---
+
+## 5️⃣ src/services/auth.service.ts
+
+```typescript
+import api from './api';
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+  twoFactorCode?: string;
+  twoFactorMethod?: 'sms' | 'app';
+}
+
+export interface AuthResponse {
+  access_token: string;
+  refresh_token: string;
+  user: {
+    id: string;
+    email: string;
+    fullName: string;
+    profile: string;
+    twoFactorEnabled: boolean;
+  };
+}
+
+export interface Setup2FAResponse {
+  secret: string;
+  qrCode: string;
+  backupCodes: string[];
+}
+
+export const authService = {
+  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>('/auth/login', credentials);
+    return response.data;
+  },
+
+  async refreshToken(refreshToken: string): Promise<{ access_token: string }> {
+    const response = await api.post<{ access_token: string }>('/auth/refresh', {
+      refresh_token: refreshToken,
+    });
+    return response.data;
+  },
+
+  async logout(): Promise<void> {
+    try {
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    } finally {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
+    }
+  },
+
+  async setup2FA(): Promise<Setup2FAResponse> {
+    const response = await api.get<Setup2FAResponse>('/auth/2fa/setup');
+    return response.data;
+  },
+
+  async enable2FA(code: string): Promise<{ message: string }> {
+    const response = await api.post<{ message: string }>('/auth/2fa/enable', { code });
+    return response.data;
+  },
+};
+```
+
+---
+
+## 6️⃣ src/App.tsx (com AuthProvider)
+
+```typescript
+import { BrowserRouter } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from '@/hooks/useAuth';
+import { AppRoutes } from '@/routes';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#1a1a1a',
+              color: '#e0e0e0',
+              border: '1px solid rgba(255, 7, 58, 0.3)',
+            },
+            success: {
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+```
+
+---
+
+## 7️⃣ MOCK SERVER (Para testar sem backend)
+
+Crie um arquivo `mock-server.js` na raiz do projeto:
+
+```javascript
+const express = require('express');
+const cors = require('cors');
+const app = express();
+
+app.use(cors({
+  origin: '*',
+  credentials: true
+}));
+app.use(express.json());
+
+// Mock de login - ACEITA QUALQUER CREDENCIAL
+app.post('/api/auth/login', (req, res) => {
+  console.log('🔐 Login attempt:', req.body);
+  
+  const { email, password, twoFactorCode } = req.body;
+  
+  // Se tiver código 2FA, validar
+  if (twoFactorCode) {
+    if (twoFactorCode === '123456') {
+      return res.json({
+        access_token: 'mock-token-' + Date.now(),
+        refresh_token: 'mock-refresh-' + Date.now(),
+        user: {
+          id: '1',
+          email: email || 'admin@tecnopano.com.br',
+          fullName: 'Super Admin',
+          profile: 'SUPER_ADMIN',
+          twoFactorEnabled: true
+        }
+      });
+    } else {
+      return res.status(401).json({ message: 'Código 2FA inválido' });
+    }
+  }
+  
+  // Login sem 2FA - aceita qualquer email/password
+  if (email && password) {
+    res.json({
+      access_token: 'mock-token-' + Date.now(),
+      refresh_token: 'mock-refresh-' + Date.now(),
+      user: {
+        id: '1',
+        email: email,
+        fullName: 'Super Admin',
+        profile: 'SUPER_ADMIN',
+        twoFactorEnabled: false
+      }
+    });
+  } else {
+    res.status(401).json({ message: 'Credenciais inválidas' });
+  }
+});
+
+// Mock refresh token
+app.post('/api/auth/refresh', (req, res) => {
+  res.json({
+    access_token: 'mock-token-refreshed-' + Date.now()
+  });
+});
+
+// Mock logout
+app.post('/api/auth/logout', (req, res) => {
+  res.json({ message: 'Logout realizado' });
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Mock Backend rodando em http://localhost:${PORT}`);
+  console.log(`✅ Login aceita qualquer email/password`);
+  console.log(`✅ 2FA: use código 123456`);
+});
+```
+
+---
+
+## 8️⃣ package.json (dependências necessárias)
+
+```json
+{
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.20.0",
+    "axios": "^1.6.5",
+    "react-hot-toast": "^2.4.1",
+    "lucide-react": "^0.294.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.0",
+    "vite": "^5.0.0",
+    "typescript": "^5.2.2",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15"
+  }
+}
+```
+
+---
+
+## 9️⃣ vite.config.ts (configuração)
+
+```typescript
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
+  },
+});
+```
+
+---
+
+## 🔟 COMO USAR NO REPLIT
+
+### Passo 1: Criar estrutura
+```
+src/
+├── pages/auth/
+│   ├── Login.tsx
+│   └── Login.css
+├── hooks/
+│   └── useAuth.tsx
+├── services/
+│   ├── api.ts
+│   └── auth.service.ts
+└── App.tsx
+```
+
+### Passo 2: Instalar dependências
+```bash
+npm install react react-dom react-router-dom axios react-hot-toast lucide-react
+npm install -D vite @vitejs/plugin-react typescript @types/react @types/react-dom
+```
+
+### Passo 3: Rodar mock server (terminal 1)
+```bash
+node mock-server.js
+```
+
+### Passo 4: Rodar frontend (terminal 2)
+```bash
+npm run dev
+```
+
+### Passo 5: Testar login
+- Email: qualquer email (ex: `admin@test.com`)
+- Senha: qualquer senha (ex: `123456`)
+- 2FA (se pedir): `123456`
+
+---
+
+## ✅ CHECKLIST FUNCIONAL
+
+- [x] Componente Login.tsx completo
+- [x] Estilos Login.css completos
+- [x] Hook useAuth funcional
+- [x] Serviço auth.service funcional
+- [x] API configurada com interceptors
+- [x] Mock server para testes
+- [x] Tratamento de erros
+- [x] Suporte a 2FA
+- [x] Redirecionamento após login
+- [x] Toast notifications
+- [x] Loading states
+- [x] Responsivo
+
+---
+
+**PRONTO PARA USAR NO REPLIT! 🚀**
+
+Copie os arquivos na ordem acima e está funcionando.

@@ -1,0 +1,944 @@
+# TECNOPANO 2.0 - Projeto Completo para Replit
+
+> **Stack:** React + TypeScript + Vite + Tailwind CSS + React Router + Axios
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+tecnopano-2.0/
+├── src/
+│   ├── pages/
+│   │   ├── auth/
+│   │   │   └── Login.tsx
+│   │   ├── dashboard/
+│   │   │   └── Dashboard.tsx
+│   │   ├── coleta/
+│   │   │   └── ColetaList.tsx
+│   │   ├── galpao/
+│   │   │   ├── GalpaoPainel.tsx
+│   │   │   ├── LoteManager.tsx
+│   │   │   └── TriagemTab.tsx
+│   │   ├── estoque/
+│   │   │   └── EstoqueList.tsx
+│   │   ├── expedicao/
+│   │   │   ├── CardProdutos.tsx
+│   │   │   ├── PedidoList.tsx
+│   │   │   ├── PedidoForm.tsx
+│   │   │   └── Liberacao.tsx
+│   │   ├── financeiro/
+│   │   │   └── FinanceiroPainel.tsx
+│   │   ├── notafiscal/
+│   │   │   └── NotaFiscalList.tsx
+│   │   ├── logistica/
+│   │   │   └── Entregas.tsx
+│   │   ├── cadastros/
+│   │   │   ├── Empresas.tsx
+│   │   │   └── Produtos.tsx
+│   │   └── admin/
+│   │       ├── Usuarios.tsx
+│   │       ├── Perfis.tsx
+│   │       └── Permissoes.tsx
+│   ├── components/
+│   │   ├── layout/
+│   │   │   ├── MainLayout.tsx
+│   │   │   ├── Sidebar.tsx
+│   │   │   └── Header.tsx
+│   │   ├── shared/
+│   │   │   ├── KPICard.tsx
+│   │   │   ├── StatusBadge.tsx
+│   │   │   └── EmptyState.tsx
+│   │   └── ui/
+│   │       ├── Button.tsx
+│   │       ├── Input.tsx
+│   │       ├── Card.tsx
+│   │       ├── Badge.tsx
+│   │       ├── Modal.tsx
+│   │       └── Tabs.tsx
+│   ├── services/
+│   │   ├── api.ts
+│   │   ├── auth.service.ts
+│   │   ├── dashboard.service.ts
+│   │   └── ...
+│   ├── hooks/
+│   │   ├── useAuth.tsx
+│   │   └── usePermissions.ts
+│   ├── routes/
+│   │   ├── index.tsx
+│   │   └── PrivateRoute.tsx
+│   ├── data/
+│   │   ├── permissions.ts
+│   │   └── mock*.ts
+│   ├── utils/
+│   │   ├── formatters.ts
+│   │   ├── constants.ts
+│   │   └── storage.ts
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── index.css
+├── package.json
+├── vite.config.ts
+├── tsconfig.json
+└── tailwind.config.js
+```
+
+---
+
+## 🚀 Configuração Inicial (Replit)
+
+### 1. package.json
+
+```json
+{
+  "name": "tecnopano-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.17.9",
+    "axios": "^1.6.5",
+    "clsx": "^2.0.0",
+    "date-fns": "^2.30.0",
+    "framer-motion": "^10.16.16",
+    "html5-qrcode": "^2.3.8",
+    "lucide-react": "^0.294.0",
+    "qrcode.react": "^4.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.48.0",
+    "react-hot-toast": "^2.4.1",
+    "react-router-dom": "^6.20.0",
+    "recharts": "^2.10.0",
+    "socket.io-client": "^4.6.1",
+    "zod": "^3.22.4",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@types/qrcode.react": "^1.0.5",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@vitejs/plugin-react": "^4.2.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0"
+  }
+}
+```
+
+### 2. vite.config.ts
+
+```typescript
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    hmr: {
+      overlay: false,
+    },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true,
+  },
+});
+```
+
+### 3. tsconfig.json
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}
+```
+
+### 4. tailwind.config.js
+
+```javascript
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#3B82F6',
+          dark: '#2563EB',
+          light: '#60A5FA',
+        },
+        'tecnopano-red': '#3B82F6',
+        'tecnopano-dark': '#1A1A1A',
+        'tecnopano-white': '#FFFFFF',
+        'tecnopano-background': '#F5F5F5',
+        'tecnopano-gray-light': '#E5E7EB',
+        'tecnopano-gray-medium': '#9CA3AF',
+      },
+    },
+  },
+  plugins: [],
+}
+```
+
+---
+
+## 📄 Arquivos Principais
+
+### src/main.tsx
+
+```typescript
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+```
+
+### src/App.tsx
+
+```typescript
+import { BrowserRouter } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from '@/hooks/useAuth';
+import { AppRoutes } from '@/routes';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#ffffff',
+              color: '#1a1a1a',
+              border: '1px solid #e5e7eb',
+            },
+          }}
+        />
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+```
+
+### src/index.css
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f5f5f5;
+  color: #1a1a1a;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+@layer utilities {
+  .glass {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+  }
+  
+  .glass:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-color: #d1d5db;
+  }
+  
+  .glass-strong {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+```
+
+---
+
+## 🔐 Autenticação
+
+### src/hooks/useAuth.tsx
+
+```typescript
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authService, LoginCredentials } from '@/services/auth.service';
+import { storage } from '@/utils/storage';
+
+interface User {
+  id: string;
+  email: string;
+  fullName: string;
+  profile: string;
+  twoFactorEnabled: boolean;
+}
+
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+  login: (email: string, password: string, twoFactorCode?: string, twoFactorMethod?: 'sms' | 'app') => Promise<void>;
+  logout: () => void;
+  isAuthenticated: boolean;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUser = storage.get('user');
+    const token = storage.get('access_token');
+    if (storedUser && token) {
+      setUser(storedUser);
+    }
+    setLoading(false);
+  }, []);
+
+  const login = async (email: string, password: string, twoFactorCode?: string, twoFactorMethod?: 'sms' | 'app') => {
+    const credentials: LoginCredentials = { email, password };
+    if (twoFactorCode) {
+      credentials.twoFactorCode = twoFactorCode;
+      credentials.twoFactorMethod = twoFactorMethod;
+    }
+    const response = await authService.login(credentials);
+    storage.set('access_token', response.access_token);
+    storage.set('refresh_token', response.refresh_token);
+    storage.set('user', response.user);
+    setUser(response.user);
+    navigate('/dashboard');
+  };
+
+  const logout = () => {
+    storage.remove('access_token');
+    storage.remove('refresh_token');
+    storage.remove('user');
+    setUser(null);
+    navigate('/login');
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, loading, login, logout, isAuthenticated: !!user }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  return context;
+}
+```
+
+### src/services/auth.service.ts
+
+```typescript
+import api from './api';
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+  twoFactorCode?: string;
+  twoFactorMethod?: 'sms' | 'app';
+}
+
+export interface AuthResponse {
+  access_token: string;
+  refresh_token: string;
+  user: {
+    id: string;
+    email: string;
+    fullName: string;
+    profile: string;
+    twoFactorEnabled: boolean;
+  };
+}
+
+export const authService = {
+  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>('/auth/login', credentials);
+    return response.data;
+  },
+  async refreshToken(refreshToken: string): Promise<{ access_token: string }> {
+    const response = await api.post<{ access_token: string }>('/auth/refresh', { refresh_token: refreshToken });
+    return response.data;
+  },
+  async logout(): Promise<void> {
+    await api.post('/auth/logout');
+  },
+};
+```
+
+### src/services/api.ts
+
+```typescript
+import axios from 'axios';
+import { storage } from '@/utils/storage';
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+api.interceptors.request.use((config) => {
+  const token = storage.get('access_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      storage.remove('access_token');
+      storage.remove('refresh_token');
+      storage.remove('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;
+```
+
+---
+
+## 📊 Dashboard
+
+### src/pages/dashboard/Dashboard.tsx
+
+```typescript
+import { useState, useEffect } from 'react';
+import MainLayout from '../../components/layout/MainLayout';
+import { Truck, Package, ShoppingCart, TruckIcon, Trash2 } from 'lucide-react';
+import { KPICard } from '../../components/shared/KPICard';
+import { dashboardService, DashboardStats } from '../../services/dashboard.service';
+
+export default function Dashboard() {
+  const [stats, setStats] = useState<DashboardStats>({
+    coletasHoje: 0,
+    producaoMes: 0,
+    pedidosPendentes: 0,
+    entregasHoje: 0,
+    statusColetas: {},
+    residuos: {
+      separacao: 0,
+      producao: 0,
+      costureira: 0,
+      repanol: 0,
+      total: 0,
+    },
+    separacaoPorTipo: [],
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadStats();
+  }, []);
+
+  const loadStats = async () => {
+    try {
+      const data = await dashboardService.getStats('hoje');
+      setStats(data);
+    } catch (error) {
+      console.error('Erro ao carregar estatísticas:', error);
+      setStats({
+        coletasHoje: 0,
+        producaoMes: 0,
+        pedidosPendentes: 0,
+        entregasHoje: 0,
+        statusColetas: {},
+        residuos: {
+          separacao: 0,
+          producao: 0,
+          costureira: 0,
+          repanol: 0,
+          total: 0,
+        },
+        separacaoPorTipo: [],
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <MainLayout title="Dashboard">
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+
+        {/* KPIs */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <KPICard
+            title="Coletas Hoje"
+            value={stats.coletasHoje}
+            icon={<Truck size={40} />}
+            color="primary"
+          />
+          <KPICard
+            title="Produção do Mês"
+            value={`${(stats.producaoMes || 0).toLocaleString()} kg`}
+            icon={<Package size={40} />}
+            color="success"
+          />
+          <KPICard
+            title="Pedidos Pendentes"
+            value={stats.pedidosPendentes}
+            icon={<ShoppingCart size={40} />}
+            color="warning"
+          />
+          <KPICard
+            title="Entregas Hoje"
+            value={stats.entregasHoje}
+            icon={<TruckIcon size={40} />}
+            color="info"
+          />
+        </div>
+
+        {/* Indicadores de Status Separação */}
+        <div className="glass rounded-xl shadow-sm p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Indicadores de Status Separação
+          </h2>
+          <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
+            {(stats.separacaoPorTipo || []).map((item) => (
+              <div
+                key={item.tipo}
+                className="text-center p-4 bg-gray-50 rounded-lg border"
+              >
+                <div className="text-lg font-bold text-blue-600">{item.peso}</div>
+                <div className="text-xs text-gray-500 mt-1">{item.tipo}</div>
+                <div className="text-xs text-gray-400">kg</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Status Geral */}
+          <div className="glass rounded-xl shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Status Geral das Coletas
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 bg-blue-100 rounded-lg border border-blue-200">
+                <div className="text-2xl font-bold text-blue-600">
+                  {stats.statusColetas['PLANEJAMENTO'] || 0}
+                </div>
+                <div className="text-sm text-blue-600">Planejamento</div>
+              </div>
+              <div className="p-4 bg-amber-100 rounded-lg border border-amber-200">
+                <div className="text-2xl font-bold text-amber-600">
+                  {stats.statusColetas['ENTRADA_COLETA'] || 0}
+                </div>
+                <div className="text-sm text-amber-600">Entrada Coleta</div>
+              </div>
+              <div className="p-4 bg-amber-100 rounded-lg border border-amber-200">
+                <div className="text-2xl font-bold text-amber-600">
+                  {stats.statusColetas['PESAGEM'] || 0}
+                </div>
+                <div className="text-sm text-amber-600">Pesagem</div>
+              </div>
+              <div className="p-4 bg-blue-100 rounded-lg border border-blue-200">
+                <div className="text-2xl font-bold text-blue-600">
+                  {stats.statusColetas['TRIAGEM'] || 0}
+                </div>
+                <div className="text-sm text-blue-600">Triagem</div>
+              </div>
+              <div className="p-4 bg-green-100 rounded-lg border border-green-200">
+                <div className="text-2xl font-bold text-green-600">
+                  {stats.statusColetas['PRODUCAO'] || 0}
+                </div>
+                <div className="text-sm text-green-600">Produção</div>
+              </div>
+              <div className="p-4 bg-green-100 rounded-lg border border-green-200">
+                <div className="text-2xl font-bold text-green-600">
+                  {stats.statusColetas['FINALIZADO'] || 0}
+                </div>
+                <div className="text-sm text-green-600">Finalizado</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Resíduos */}
+          <div className="glass rounded-xl shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Trash2 size={20} className="text-gray-500" />
+              Resíduos Acumulados
+            </h2>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                <span className="text-gray-600">Renova Separação</span>
+                <span className="font-semibold">{stats.residuos.separacao} kg</span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                <span className="text-gray-600">Renova Produção</span>
+                <span className="font-semibold">{stats.residuos.producao} kg</span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                <span className="text-gray-600">Resíduos Costureira</span>
+                <span className="font-semibold">{stats.residuos.costureira} kg</span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                <span className="text-gray-600">Renova Repanol</span>
+                <span className="font-semibold">{stats.residuos.repanol} kg</span>
+              </div>
+              <hr />
+              <div className="flex justify-between items-center p-3 bg-gray-100 rounded-lg border border-gray-200">
+                <span className="font-semibold text-gray-900">TOTAL → Incineração</span>
+                <span className="font-bold text-gray-900">{stats.residuos.total} kg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Últimas Coletas */}
+        <div className="glass rounded-xl shadow-sm p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Últimas Coletas</h2>
+          <div className="text-center py-8 text-gray-500">
+            <p>Nenhuma coleta encontrada</p>
+            <p className="text-sm mt-2">As coletas aparecerão aqui quando forem criadas</p>
+          </div>
+        </div>
+      </div>
+    </MainLayout>
+  );
+}
+```
+
+### src/components/shared/KPICard.tsx
+
+```typescript
+import { ReactNode } from 'react';
+import { clsx } from 'clsx';
+
+interface KPICardProps {
+  title: string;
+  value: string | number;
+  icon: ReactNode;
+  color?: 'primary' | 'success' | 'warning' | 'info';
+}
+
+export function KPICard({ title, value, icon, color = 'primary' }: KPICardProps) {
+  const colors = {
+    primary: 'bg-blue-100 text-blue-600 border-blue-200',
+    success: 'bg-green-100 text-green-600 border-green-200',
+    warning: 'bg-amber-100 text-amber-600 border-amber-200',
+    info: 'bg-blue-100 text-blue-600 border-blue-200',
+  };
+
+  return (
+    <div className={clsx('p-6 rounded-xl border-2 glass', colors[color])}>
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-sm font-medium opacity-70">{title}</p>
+        <div className="opacity-50">{icon}</div>
+      </div>
+      <p className="text-3xl font-bold mb-1">{value}</p>
+    </div>
+  );
+}
+```
+
+---
+
+## 🏗️ Layout
+
+### src/components/layout/MainLayout.tsx
+
+```typescript
+import { useState } from 'react';
+import { Sidebar } from './Sidebar';
+import { Header } from './Header';
+
+interface MainLayoutProps {
+  children: React.ReactNode;
+  title?: string;
+}
+
+export default function MainLayout({ children, title }: MainLayoutProps) {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex">
+      <Sidebar
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+      />
+      <main
+        className={`flex-1 transition-all duration-300 relative z-10 ${
+          sidebarCollapsed ? 'ml-20' : 'ml-64'
+        }`}
+      >
+        <Header title={title} />
+        <div className="p-6 bg-gray-50">{children}</div>
+        <footer className="p-4 text-center text-xs text-gray-500 border-t border-gray-200 bg-white">
+          <p>TECNOPANO 2.0 - Sistema de Gestão Industrial</p>
+        </footer>
+      </main>
+    </div>
+  );
+}
+```
+
+---
+
+## 👥 Administração
+
+### src/pages/admin/Usuarios.tsx
+
+```typescript
+import { useState, useEffect } from 'react';
+import MainLayout from '../../components/layout/MainLayout';
+import { Plus, Search, Edit2, Trash2, UserPlus } from 'lucide-react';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
+import { Card } from '../../components/ui/Card';
+
+interface Usuario {
+  id: string;
+  email: string;
+  fullName: string;
+  profile: string;
+  active: boolean;
+}
+
+export default function Usuarios() {
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadUsuarios();
+  }, []);
+
+  const loadUsuarios = async () => {
+    try {
+      // Mock data
+      setUsuarios([
+        { id: '1', email: 'admin@tecnopano.com.br', fullName: 'Super Admin', profile: 'SUPER_ADMIN', active: true },
+      ]);
+    } catch (error) {
+      console.error('Erro ao carregar usuários:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <MainLayout title="Usuários">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <UserPlus className="h-6 w-6 text-blue-600" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Usuários</h1>
+              <p className="text-sm text-gray-500">Gerencie usuários do sistema</p>
+            </div>
+          </div>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Novo Usuário
+          </Button>
+        </div>
+
+        <Card>
+          <div className="p-4">
+            <div className="flex items-center gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Buscar usuário..."
+                  className="pl-9"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nome</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Perfil</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Ações</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {usuarios.map((usuario) => (
+                  <tr key={usuario.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {usuario.fullName}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {usuario.email}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {usuario.profile}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        usuario.active 
+                          ? 'bg-green-100 text-green-600' 
+                          : 'bg-gray-100 text-gray-600'
+                      }`}>
+                        {usuario.active ? 'Ativo' : 'Inativo'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button variant="ghost" size="sm">
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm">
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      </div>
+    </MainLayout>
+  );
+}
+```
+
+---
+
+## 📝 Notas Importantes
+
+1. **Backend Mock**: Use o `mock-server.js` no backend para desenvolvimento
+2. **Cores**: Sistema usa azul (`#3B82F6`) como cor primária, não vermelho
+3. **Design System**: Seguir o README-UI-DESIGN-SYSTEM.md para consistência
+4. **Permissões**: Sistema de permissões em `src/data/permissions.ts`
+5. **Rotas**: Todas as rotas protegidas com `PrivateRoute`
+
+---
+
+## 🚀 Comandos Replit
+
+```bash
+# Instalar dependências
+npm install
+
+# Rodar desenvolvimento
+npm run dev
+
+# Build produção
+npm run build
+```
+
+---
+
+**Estrutura completa do projeto TECNOPANO 2.0**
