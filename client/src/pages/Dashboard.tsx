@@ -3,13 +3,8 @@ import { StatsCard } from "@/components/domain/StatsCard";
 import { PageHeader } from "@/components/domain/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-
-const stats = [
-  { title: "Total Coletas", value: 150, icon: Building2, color: "text-primary", bgColor: "bg-red-50" },
-  { title: "Em Processamento", value: 120, icon: Activity, color: "text-green-600", bgColor: "bg-green-100" },
-  { title: "Pendentes", value: 25, icon: Clock, color: "text-amber-600", bgColor: "bg-amber-100" },
-  { title: "Críticas", value: 5, icon: AlertCircle, color: "text-red-600", bgColor: "bg-red-100" },
-];
+import { useDashboardStats } from "@/hooks/useApi";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const chartData = [
   { name: "Seg", coletas: 40, entregas: 24 },
@@ -21,18 +16,45 @@ const chartData = [
 ];
 
 export default function Dashboard() {
+  const { data: stats, isLoading, error } = useDashboardStats();
+
+  const statsCards = stats ? [
+    { title: "Total Coletas", value: stats.totalColetas, icon: Building2, color: "text-primary", bgColor: "bg-red-50" },
+    { title: "Em Processamento", value: stats.lotesEmProcessamento, icon: Activity, color: "text-green-600", bgColor: "bg-green-100" },
+    { title: "Pendentes", value: stats.coletasPendentes, icon: Clock, color: "text-amber-600", bgColor: "bg-amber-100" },
+    { title: "Críticas", value: stats.lotesCriticos, icon: AlertCircle, color: "text-red-600", bgColor: "bg-red-100" },
+  ] : [];
+
   return (
     <div className="animate-in fade-in zoom-in-95 duration-500">
-      <PageHeader 
-        title="Galpão Dashboard" 
-        description="Visão geral das operações, coletas e expedições do dia." 
-        icon={TrendingUp} 
+      <PageHeader
+        title="Galpão Dashboard"
+        description="Visão geral das operações, coletas e expedições do dia."
+        icon={TrendingUp}
       />
 
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+          Erro ao carregar estatísticas. Tente novamente.
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat) => (
-          <StatsCard key={stat.title} {...stat} />
-        ))}
+        {isLoading ? (
+          <>
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i} className="border-none shadow-sm">
+                <CardContent className="p-6">
+                  <Skeleton className="h-20 w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </>
+        ) : (
+          statsCards.map((stat) => (
+            <StatsCard key={stat.title} {...stat} />
+          ))
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
