@@ -451,9 +451,13 @@ export class MemStorage implements IStorage {
             console.log(`📝 Criando ${clientesSeed.length} clientes no MemStorage...`);
             for (const clienteData of clientesSeed) {
               const id = randomUUID();
+              // Mapear cpfCnpj para cpf ou cnpj conforme o tipo
+              const { cpfCnpj, ...rest } = clienteData as any;
               const cliente: Cliente = {
-                ...clienteData,
+                ...rest,
                 id,
+                cpf: clienteData.tipo === 'fisica' ? cpfCnpj : undefined,
+                cnpj: clienteData.tipo === 'juridica' ? cpfCnpj : undefined,
                 ativo: clienteData.ativo ?? true,
                 createdAt: new Date(),
                 updatedAt: new Date(),
