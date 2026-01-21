@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { 
   Truck, TruckIcon, Pencil, Trash2, Search, Filter, ChevronLeft, ChevronRight
 } from "lucide-react";
@@ -40,10 +40,20 @@ export default function Fornecedores() {
   , [fornecedores, searchTerm]);
 
   // Paginação
-  const totalPages = Math.ceil(filteredFornecedores.length / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(filteredFornecedores.length / itemsPerPage));
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedFornecedores = filteredFornecedores.slice(startIndex, endIndex);
+  const paginatedFornecedores = useMemo(() => 
+    filteredFornecedores.slice(startIndex, endIndex),
+    [filteredFornecedores, startIndex, endIndex]
+  );
+
+  // Ajustar página atual se estiver fora do range
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [currentPage, totalPages]);
 
   // Resetar para primeira página quando mudar filtro ou items per page
   const handleItemsPerPageChange = (value: number) => {
