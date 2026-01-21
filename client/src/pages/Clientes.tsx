@@ -29,12 +29,14 @@ export default function Clientes() {
   };
 
   const filteredClientes = clientes?.filter(c => 
-    c.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.razaoSocial?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.cnpj?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.cpf?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.contato?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.id.toLowerCase().includes(searchTerm.toLowerCase())
+    c.telefone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.cidade?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.id?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
   return (
@@ -130,7 +132,7 @@ export default function Clientes() {
                         </Badge>
                       </TableCell>
                       <TableCell className="font-mono text-sm">
-                        {cliente.cpf || cliente.cnpj || "-"}
+                        {cliente.cpfCnpj || cliente.cpf || cliente.cnpj || "-"}
                       </TableCell>
                       <TableCell>{cliente.contato || "-"}</TableCell>
                       <TableCell>{cliente.telefone || "-"}</TableCell>
