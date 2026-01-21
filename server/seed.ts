@@ -1,8 +1,12 @@
 import { storage } from './storage';
 import type { InsertProduto, InsertCliente, InsertFornecedor } from '@shared/schema';
+import { fornecedoresSeed } from './fornecedores-data';
 
-// Exportar arrays de dados para uso no MemStorage
-export const fornecedoresSeed: InsertFornecedor[] = [
+// Re-exportar para compatibilidade
+export { fornecedoresSeed };
+
+// Mantido para referência, mas usar fornecedores-data.ts
+const fornecedoresSeedOld: InsertFornecedor[] = [
     {
     nome: "ATMOSFERA - SP - DIADEMA",
     razaoSocial: "ATMOSFERA GESTAO E HIGIENIZACAO DE TEXTEIS S.A.",
@@ -744,7 +748,7 @@ export const fornecedoresSeed: InsertFornecedor[] = [
     contato: "47-992005758",
     ativo: true
   }
-];
+]; // Não usado mais - usar fornecedores-data.ts
 
 async function seed() {
   console.log('🌱 Iniciando seed do banco de dados...\n');

@@ -378,17 +378,20 @@ export class MemStorage implements IStorage {
 
   // ==================== SEED DATA ====================
   private async seedData() {
-    // Carregar dados do seed.ts usando import dinâmico
-    // Usar setTimeout para evitar dependência circular na inicialização
+    // Carregar dados de fornecedores-data.ts (sem dependência circular)
     let fornecedoresSeed: InsertFornecedor[] = [];
     
     try {
-      // Importar de forma dinâmica e assíncrona para evitar dependência circular
-      // Aguardar um tick para garantir que storage já foi exportado
-      await new Promise(resolve => setTimeout(resolve, 0));
-      
-      const seedModule = await import('./seed');
-      fornecedoresSeed = seedModule.fornecedoresSeed || [];
+      // Tentar carregar do arquivo de dados separado primeiro
+      try {
+        const dataModule = await import('./fornecedores-data');
+        fornecedoresSeed = dataModule.fornecedoresSeed || [];
+      } catch (dataError) {
+        // Se não existir, tentar do seed.ts
+        await new Promise(resolve => setTimeout(resolve, 0));
+        const seedModule = await import('./seed');
+        fornecedoresSeed = seedModule.fornecedoresSeed || [];
+      }
       
       if (fornecedoresSeed && fornecedoresSeed.length > 0) {
         // Criar todos os fornecedores do seed
@@ -404,39 +407,12 @@ export class MemStorage implements IStorage {
           this.fornecedores.set(id, fornecedor);
         }
         console.log(`✅ ${fornecedoresSeed.length} fornecedores carregados no MemStorage`);
-        // Sucesso, criar usuário admin e retornar
         this.createAdminUser();
         return;
       }
     } catch (error: any) {
-      // Se falhar (pode ser dependência circular), tentar novamente ou usar dados padrão
-      console.warn('⚠️ Erro ao carregar seed, tentando novamente...', error?.message || error);
-      
-      // Tentar novamente após um pequeno delay
-      try {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        const seedModule = await import('./seed');
-        fornecedoresSeed = seedModule.fornecedoresSeed || [];
-        
-        if (fornecedoresSeed && fornecedoresSeed.length > 0) {
-          for (const fornecedorData of fornecedoresSeed) {
-            const id = randomUUID();
-            const fornecedor: Fornecedor = {
-              ...fornecedorData,
-              id,
-              ativo: fornecedorData.ativo ?? true,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            };
-            this.fornecedores.set(id, fornecedor);
-          }
-          console.log(`✅ ${fornecedoresSeed.length} fornecedores carregados no MemStorage (tentativa 2)`);
-          this.createAdminUser();
-          return;
-        }
-      } catch (retryError: any) {
-        console.warn('⚠️ Erro na segunda tentativa, usando dados padrão:', retryError?.message || retryError);
-      }
+      // Se falhar, usar dados padrão
+      console.warn('⚠️ Erro ao carregar seed, usando dados padrão:', error?.message || error);
     }
     
     // Se chegou aqui, usar dados padrão (3 fornecedores)
