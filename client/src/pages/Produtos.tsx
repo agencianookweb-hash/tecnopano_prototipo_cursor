@@ -137,6 +137,7 @@ export default function Produtos() {
                   <TableHead>Acabamento</TableHead>
                   <TableHead>Cor</TableHead>
                   <TableHead>Medida</TableHead>
+                  <TableHead className="text-right">Preço Venda</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right pr-6">Ações</TableHead>
                 </TableRow>
@@ -144,7 +145,7 @@ export default function Produtos() {
               <TableBody>
                 {paginatedProdutos.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                       Nenhum produto encontrado
                     </TableCell>
                   </TableRow>
@@ -156,6 +157,9 @@ export default function Produtos() {
                       <TableCell>{produto.acabamento || "-"}</TableCell>
                       <TableCell>{produto.cor || "-"}</TableCell>
                       <TableCell>{produto.medida || produto.unidadeMedida || "-"}</TableCell>
+                      <TableCell className="text-right font-medium">
+                        {produto.precoVenda ? `R$ ${Number(produto.precoVenda).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-"}
+                      </TableCell>
                       <TableCell>
                         <Badge 
                           className={
