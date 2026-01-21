@@ -24,6 +24,11 @@ export function useFornecedores() {
   return useQuery({
     queryKey: ['fornecedores'],
     queryFn: api.getFornecedores,
+    retry: 1,
+    retryDelay: 1000,
+    onError: (error) => {
+      console.error('Erro ao buscar fornecedores:', error);
+    },
   });
 }
 

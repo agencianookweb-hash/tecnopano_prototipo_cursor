@@ -20,20 +20,34 @@ import type {
 const API_BASE_URL = '/api';
 
 async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers,
+      },
+    });
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Erro na requisição' }));
-    throw new Error(error.message || `HTTP error! status: ${response.status}`);
+    if (!response.ok) {
+      let errorMessage = `HTTP error! status: ${response.status}`;
+      try {
+        const error = await response.json();
+        errorMessage = error.message || errorMessage;
+      } catch {
+        // Se não conseguir parsear JSON, usar mensagem padrão
+      }
+      throw new Error(errorMessage);
+    }
+
+    return await response.json();
+  } catch (error) {
+    // Garantir que erros sejam sempre Error objects
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error(String(error) || 'Erro desconhecido na requisição');
   }
-
-  return response.json();
 }
 
 // ==================== FORNECEDORES ====================
