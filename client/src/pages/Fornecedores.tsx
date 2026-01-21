@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { 
-  Truck, TruckIcon, Pencil, Trash2, Search, Filter
+  Truck, TruckIcon, Pencil, Trash2, Search, Filter, ChevronLeft, ChevronRight
 } from "lucide-react";
 import { PageHeader } from "@/components/domain/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -16,6 +16,8 @@ export default function Fornecedores() {
   const { data: fornecedores, isLoading } = useFornecedores();
   const deleteFornecedor = useDeleteFornecedor();
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este fornecedor?")) {
@@ -28,12 +30,37 @@ export default function Fornecedores() {
     }
   };
 
-  const filteredFornecedores = fornecedores?.filter(f => 
-    f.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    f.razaoSocial?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    f.cnpj?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    f.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  const filteredFornecedores = useMemo(() => 
+    fornecedores?.filter(f => 
+      f.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      f.razaoSocial?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      f.cnpj?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      f.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || []
+  , [fornecedores, searchTerm]);
+
+  // Paginação
+  const totalPages = Math.ceil(filteredFornecedores.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedFornecedores = filteredFornecedores.slice(startIndex, endIndex);
+
+  // Resetar para primeira página quando mudar filtro ou items per page
+  const handleItemsPerPageChange = (value: number) => {
+    setItemsPerPage(value);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+  };
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -58,7 +85,7 @@ export default function Fornecedores() {
                 placeholder="Buscar por nome, razão social, CNPJ ou email..." 
                 className="pl-9 bg-muted/30 border-muted"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
               />
             </div>
 
@@ -77,7 +104,7 @@ export default function Fornecedores() {
             <div>
               <CardTitle>Lista de Fornecedores</CardTitle>
               <CardDescription>
-                {isLoading ? "Carregando..." : `Total de ${filteredFornecedores.length} fornecedores cadastrados`}
+                {isLoading ? "Carregando..." : `Total de ${filteredFornecedores.length} fornecedores cadastrados${filteredFornecedores.length > itemsPerPage ? ` - Página ${currentPage} de ${totalPages}` : ''}`}
               </CardDescription>
             </div>
           </div>
@@ -107,14 +134,14 @@ export default function Fornecedores() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredFornecedores.length === 0 ? (
+                {paginatedFornecedores.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
                       Nenhum fornecedor encontrado
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredFornecedores.map((fornecedor) => (
+                  paginatedFornecedores.map((fornecedor) => (
                     <TableRow key={fornecedor.id} className="hover:bg-muted/10 transition-colors">
                       <TableCell className="pl-6 py-4 font-medium">{fornecedor.nome}</TableCell>
                       <TableCell>{fornecedor.razaoSocial || "-"}</TableCell>
@@ -157,6 +184,87 @@ export default function Fornecedores() {
             </Table>
           )}
         </CardContent>
+
+        {/* Paginação */}
+        {!isLoading && filteredFornecedores.length > 0 && (
+          <div className="border-t border-border p-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              {/* Seleção de itens por página */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Itens por página:</span>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+                  className="px-3 py-1.5 text-sm border border-input rounded-md bg-background hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+              </div>
+
+              {/* Informações de paginação */}
+              <div className="text-sm text-muted-foreground">
+                Mostrando {startIndex + 1} a {Math.min(endIndex, filteredFornecedores.length)} de {filteredFornecedores.length} fornecedores
+              </div>
+
+              {/* Controles de navegação */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="h-9 w-9 p-0"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNumber;
+                    if (totalPages <= 5) {
+                      pageNumber = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNumber = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNumber = totalPages - 4 + i;
+                    } else {
+                      pageNumber = currentPage - 2 + i;
+                    }
+
+                    return (
+                      <Button
+                        key={pageNumber}
+                        variant={currentPage === pageNumber ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => goToPage(pageNumber)}
+                        className={`h-9 w-9 p-0 ${
+                          currentPage === pageNumber
+                            ? "bg-primary text-primary-foreground"
+                            : ""
+                        }`}
+                      >
+                        {pageNumber}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="h-9 w-9 p-0"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   );
