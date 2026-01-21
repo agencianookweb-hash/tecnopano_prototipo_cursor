@@ -113,7 +113,10 @@ export class MemStorage implements IStorage {
     this.clientes = new Map();
     this.vendas = new Map();
     this.itensVenda = new Map();
-    this.seedData();
+    // Executar seedData de forma assíncrona sem bloquear
+    this.seedData().catch((error) => {
+      console.error('❌ Erro ao executar seedData:', error);
+    });
   }
 
   // ==================== USERS ====================
@@ -374,29 +377,41 @@ export class MemStorage implements IStorage {
   }
 
   // ==================== SEED DATA ====================
-  private seedData() {
-    // Importar dados do seed.ts dinamicamente
+  private async seedData() {
+    // Carregar dados do seed.ts usando require dinâmico
+    // Usar try/catch para lidar com possíveis dependências circulares
+    let fornecedoresSeed: InsertFornecedor[] = [];
+    
     try {
+      // Tentar carregar usando require (evita problemas de import dinâmico)
       const seedModule = require('./seed');
-      const fornecedoresSeed = seedModule.fornecedoresSeed || [];
+      fornecedoresSeed = seedModule.fornecedoresSeed || [];
       
-      // Criar todos os fornecedores do seed
-      for (const fornecedorData of fornecedoresSeed) {
-        const id = randomUUID();
-        const fornecedor: Fornecedor = {
-          ...fornecedorData,
-          id,
-          ativo: fornecedorData.ativo ?? true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-        this.fornecedores.set(id, fornecedor);
+      if (fornecedoresSeed && fornecedoresSeed.length > 0) {
+        // Criar todos os fornecedores do seed
+        for (const fornecedorData of fornecedoresSeed) {
+          const id = randomUUID();
+          const fornecedor: Fornecedor = {
+            ...fornecedorData,
+            id,
+            ativo: fornecedorData.ativo ?? true,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+          this.fornecedores.set(id, fornecedor);
+        }
+        console.log(`✅ ${fornecedoresSeed.length} fornecedores carregados no MemStorage`);
+        // Sucesso, criar usuário admin e retornar
+        this.createAdminUser();
+        return;
       }
-      
-      console.log(`✅ ${fornecedoresSeed.length} fornecedores carregados no MemStorage`);
-    } catch (error) {
-      // Se falhar, usar dados padrão (3 fornecedores)
-      console.warn('⚠️ Erro ao carregar seed completo, usando dados padrão:', error);
+    } catch (error: any) {
+      // Se falhar (pode ser dependência circular ou módulo não encontrado), usar dados padrão
+      console.warn('⚠️ Erro ao carregar seed completo, usando dados padrão:', error?.message || error);
+    }
+    
+    // Se chegou aqui, usar dados padrão (3 fornecedores)
+    if (fornecedoresSeed.length === 0) {
       
       // Seed fornecedores padrão (3)
       const fornecedor1Id = randomUUID();
