@@ -12807,10 +12807,10 @@ export let clientesSeed: InsertCliente[] = [
     ativo: true
   },
   {
-    nome: "Cliente CNPJ TEMP.Y4C24WUI1/0001-XX",
+    nome: "Cliente CNPJ TEMP.DW4GUNTHD/0001-XX",
     tipo: "juridica",
-    razaoSocial: "Empresa CNPJ TEMP.Y4C24WUI1/0001-XX",
-    cnpj: "TEMP.Y4C24WUI1/0001-XX",
+    razaoSocial: "Empresa CNPJ TEMP.DW4GUNTHD/0001-XX",
+    cnpj: "TEMP.DW4GUNTHD/0001-XX",
     endereco: null,
     cidade: null,
     estado: "SP",
@@ -12989,10 +12989,10 @@ export let clientesSeed: InsertCliente[] = [
     ativo: true
   },
   {
-    nome: "Cliente CNPJ TEMP.62XMB37FX/0001-XX",
+    nome: "Cliente CNPJ TEMP.OCW1D3MW7/0001-XX",
     tipo: "juridica",
-    razaoSocial: "Empresa CNPJ TEMP.62XMB37FX/0001-XX",
-    cnpj: "TEMP.62XMB37FX/0001-XX",
+    razaoSocial: "Empresa CNPJ TEMP.OCW1D3MW7/0001-XX",
+    cnpj: "TEMP.OCW1D3MW7/0001-XX",
     endereco: null,
     cidade: null,
     estado: "SP",
@@ -13115,10 +13115,10 @@ export let clientesSeed: InsertCliente[] = [
     ativo: true
   },
   {
-    nome: "Cliente CNPJ TEMP.1T7KAAYPL/0001-XX",
+    nome: "Cliente CNPJ TEMP.0PPLQOS0O/0001-XX",
     tipo: "juridica",
-    razaoSocial: "Empresa CNPJ TEMP.1T7KAAYPL/0001-XX",
-    cnpj: "TEMP.1T7KAAYPL/0001-XX",
+    razaoSocial: "Empresa CNPJ TEMP.0PPLQOS0O/0001-XX",
+    cnpj: "TEMP.0PPLQOS0O/0001-XX",
     endereco: null,
     cidade: null,
     estado: "SP",
@@ -13129,10 +13129,10 @@ export let clientesSeed: InsertCliente[] = [
     ativo: true
   },
   {
-    nome: "Cliente CNPJ TEMP.0L7FTR2LM/0001-XX",
+    nome: "Cliente CNPJ TEMP.O8DLS6TNZ/0001-XX",
     tipo: "juridica",
-    razaoSocial: "Empresa CNPJ TEMP.0L7FTR2LM/0001-XX",
-    cnpj: "TEMP.0L7FTR2LM/0001-XX",
+    razaoSocial: "Empresa CNPJ TEMP.O8DLS6TNZ/0001-XX",
+    cnpj: "TEMP.O8DLS6TNZ/0001-XX",
     endereco: null,
     cidade: null,
     estado: "SP",
@@ -13143,10 +13143,10 @@ export let clientesSeed: InsertCliente[] = [
     ativo: true
   },
   {
-    nome: "Cliente CNPJ TEMP.UP25GMGJR/0001-XX",
+    nome: "Cliente CNPJ TEMP.9KNEKJ3GH/0001-XX",
     tipo: "juridica",
-    razaoSocial: "Empresa CNPJ TEMP.UP25GMGJR/0001-XX",
-    cnpj: "TEMP.UP25GMGJR/0001-XX",
+    razaoSocial: "Empresa CNPJ TEMP.9KNEKJ3GH/0001-XX",
+    cnpj: "TEMP.9KNEKJ3GH/0001-XX",
     endereco: null,
     cidade: null,
     estado: "SP",
@@ -13311,10 +13311,10 @@ export let clientesSeed: InsertCliente[] = [
     ativo: true
   },
   {
-    nome: "Cliente CNPJ TEMP.1D09SYGUL/0001-XX",
+    nome: "Cliente CNPJ TEMP.ZJHGVJOT1/0001-XX",
     tipo: "juridica",
-    razaoSocial: "Empresa CNPJ TEMP.1D09SYGUL/0001-XX",
-    cnpj: "TEMP.1D09SYGUL/0001-XX",
+    razaoSocial: "Empresa CNPJ TEMP.ZJHGVJOT1/0001-XX",
+    cnpj: "TEMP.ZJHGVJOT1/0001-XX",
     endereco: null,
     cidade: null,
     estado: "SP",
@@ -13367,6 +13367,20 @@ export let clientesSeed: InsertCliente[] = [
     ativo: true
   },
   {
+    nome: "Cliente Genérico 955",
+    tipo: "juridica",
+    razaoSocial: "Empresa Genérica 955",
+    cnpj: "TEMP.00000955/0001-XX",
+    endereco: null,
+    cidade: null,
+    estado: "SP",
+    cep: null,
+    telefone: null,
+    email: null,
+    contato: null,
+    ativo: true
+  },
+  {
     nome: "Cliente CNPJ 07.580.559/0002-68",
     tipo: "juridica",
     razaoSocial: "Empresa CNPJ 07.580.559/0002-68",
@@ -13395,10 +13409,10 @@ export let clientesSeed: InsertCliente[] = [
     ativo: true
   },
   {
-    nome: "Cliente CNPJ TEMP.PDM2J9GHS/0001-XX",
+    nome: "Cliente CNPJ TEMP.TMTOOV4YQ/0001-XX",
     tipo: "juridica",
-    razaoSocial: "Empresa CNPJ TEMP.PDM2J9GHS/0001-XX",
-    cnpj: "TEMP.PDM2J9GHS/0001-XX",
+    razaoSocial: "Empresa CNPJ TEMP.TMTOOV4YQ/0001-XX",
+    cnpj: "TEMP.TMTOOV4YQ/0001-XX",
     endereco: null,
     cidade: null,
     estado: "SP",
