@@ -113,10 +113,15 @@ export class MemStorage implements IStorage {
     this.clientes = new Map();
     this.vendas = new Map();
     this.itensVenda = new Map();
-    // Executar seedData de forma assíncrona sem bloquear
-    this.seedData().catch((error) => {
-      console.error('❌ Erro ao executar seedData:', error);
-    });
+    // Executar seedData de forma síncrona usando import dinâmico
+    // Usar IIFE para executar imediatamente sem bloquear
+    (async () => {
+      try {
+        await this.seedData();
+      } catch (error) {
+        console.error('❌ Erro ao executar seedData:', error);
+      }
+    })();
   }
 
   // ==================== USERS ====================
@@ -383,18 +388,24 @@ export class MemStorage implements IStorage {
     
     try {
       // Tentar carregar do arquivo de dados separado primeiro
+      console.log('📦 Tentando carregar fornecedores de fornecedores-data.ts...');
       try {
         const dataModule = await import('./fornecedores-data');
         fornecedoresSeed = dataModule.fornecedoresSeed || [];
-      } catch (dataError) {
+        console.log(`✅ Carregados ${fornecedoresSeed.length} fornecedores de fornecedores-data.ts`);
+      } catch (dataError: any) {
         // Se não existir, tentar do seed.ts
-        await new Promise(resolve => setTimeout(resolve, 0));
+        console.warn('⚠️ Erro ao carregar fornecedores-data.ts:', dataError?.message || dataError);
+        console.log('📦 Tentando carregar de seed.ts...');
+        await new Promise(resolve => setTimeout(resolve, 100));
         const seedModule = await import('./seed');
         fornecedoresSeed = seedModule.fornecedoresSeed || [];
+        console.log(`✅ Carregados ${fornecedoresSeed.length} fornecedores de seed.ts`);
       }
       
       if (fornecedoresSeed && fornecedoresSeed.length > 0) {
         // Criar todos os fornecedores do seed
+        console.log(`📝 Criando ${fornecedoresSeed.length} fornecedores no MemStorage...`);
         for (const fornecedorData of fornecedoresSeed) {
           const id = randomUUID();
           const fornecedor: Fornecedor = {
@@ -406,13 +417,16 @@ export class MemStorage implements IStorage {
           };
           this.fornecedores.set(id, fornecedor);
         }
-        console.log(`✅ ${fornecedoresSeed.length} fornecedores carregados no MemStorage`);
+        console.log(`✅ ${fornecedoresSeed.length} fornecedores carregados e criados no MemStorage!`);
         this.createAdminUser();
         return;
+      } else {
+        console.warn('⚠️ fornecedoresSeed está vazio ou undefined');
       }
     } catch (error: any) {
       // Se falhar, usar dados padrão
-      console.warn('⚠️ Erro ao carregar seed, usando dados padrão:', error?.message || error);
+      console.error('❌ Erro ao carregar seed, usando dados padrão:', error?.message || error);
+      console.error('Stack:', error?.stack);
     }
     
     // Se chegou aqui, usar dados padrão (3 fornecedores)
