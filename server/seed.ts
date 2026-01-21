@@ -12556,43 +12556,1483 @@ async function seed() {
   console.log(`✅ Clientes inseridos: ${totalClientes}\n`);
 
   // ==================== PRODUTOS ====================
-  const produtos: InsertProduto[] = [
-    // Panos
-    { codigo: "P001", nome: "Pano de Chão Industrial", categoria: "panos", unidadeMedida: "unidade", precoCusto: "5.50", precoVenda: "12.00", pesoMedio: "0.150", estoqueMinimo: 50, ativo: true },
-    { codigo: "P002", nome: "Pano de Prato Premium", categoria: "panos", unidadeMedida: "unidade", precoCusto: "3.00", precoVenda: "8.00", pesoMedio: "0.080", estoqueMinimo: 100, ativo: true },
-    { codigo: "P003", nome: "Pano Multiuso", categoria: "panos", unidadeMedida: "unidade", precoCusto: "2.50", precoVenda: "6.50", pesoMedio: "0.100", estoqueMinimo: 150, ativo: true },
-    { codigo: "P004", nome: "Pano de Limpeza Especial", categoria: "panos", unidadeMedida: "unidade", precoCusto: "4.00", precoVenda: "10.00", pesoMedio: "0.120", estoqueMinimo: 75, ativo: true },
-    { codigo: "P005", nome: "Pano de Microfibra", categoria: "panos", unidadeMedida: "unidade", precoCusto: "6.00", precoVenda: "15.00", pesoMedio: "0.090", estoqueMinimo: 60, ativo: true },
-    { codigo: "P006", nome: "Pano para Vidros", categoria: "panos", unidadeMedida: "unidade", precoCusto: "3.50", precoVenda: "9.00", pesoMedio: "0.070", estoqueMinimo: 80, ativo: true },
-    { codigo: "P007", nome: "Pano Absorvente", categoria: "panos", unidadeMedida: "unidade", precoCusto: "4.50", precoVenda: "11.00", pesoMedio: "0.130", estoqueMinimo: 90, ativo: true },
-    { codigo: "P008", nome: "Pano de Cozinha", categoria: "panos", unidadeMedida: "unidade", precoCusto: "2.80", precoVenda: "7.50", pesoMedio: "0.085", estoqueMinimo: 120, ativo: true },
-    
-    // Toalhas
-    { codigo: "T001", nome: "Toalha de Banho Grande", categoria: "toalhas", unidadeMedida: "unidade", precoCusto: "18.00", precoVenda: "45.00", pesoMedio: "0.600", estoqueMinimo: 30, ativo: true },
-    { codigo: "T002", nome: "Toalha de Banho Média", categoria: "toalhas", unidadeMedida: "unidade", precoCusto: "15.00", precoVenda: "38.00", pesoMedio: "0.450", estoqueMinimo: 40, ativo: true },
-    { codigo: "T003", nome: "Toalha de Banho Pequena", categoria: "toalhas", unidadeMedida: "unidade", precoCusto: "12.00", precoVenda: "30.00", pesoMedio: "0.300", estoqueMinimo: 50, ativo: true },
-    { codigo: "T004", nome: "Toalha de Rosto", categoria: "toalhas", unidadeMedida: "unidade", precoCusto: "8.00", precoVenda: "20.00", pesoMedio: "0.200", estoqueMinimo: 60, ativo: true },
-    { codigo: "T005", nome: "Toalha de Mesa Grande", categoria: "toalhas", unidadeMedida: "unidade", precoCusto: "25.00", precoVenda: "65.00", pesoMedio: "0.800", estoqueMinimo: 20, ativo: true },
-    { codigo: "T006", nome: "Toalha de Mesa Pequena", categoria: "toalhas", unidadeMedida: "unidade", precoCusto: "15.00", precoVenda: "40.00", pesoMedio: "0.400", estoqueMinimo: 35, ativo: true },
-    { codigo: "T007", nome: "Toalha de Praia", categoria: "toalhas", unidadeMedida: "unidade", precoCusto: "20.00", precoVenda: "50.00", pesoMedio: "0.550", estoqueMinimo: 25, ativo: true },
-    { codigo: "T008", nome: "Toalha Hotelaria", categoria: "toalhas", unidadeMedida: "unidade", precoCusto: "22.00", precoVenda: "55.00", pesoMedio: "0.650", estoqueMinimo: 45, ativo: true },
-    
-    // Lençóis
-    { codigo: "L001", nome: "Lençol Solteiro", categoria: "lencois", unidadeMedida: "unidade", precoCusto: "30.00", precoVenda: "75.00", pesoMedio: "0.700", estoqueMinimo: 25, ativo: true },
-    { codigo: "L002", nome: "Lençol Casal", categoria: "lencois", unidadeMedida: "unidade", precoCusto: "40.00", precoVenda: "100.00", pesoMedio: "0.900", estoqueMinimo: 30, ativo: true },
-    { codigo: "L003", nome: "Lençol Queen", categoria: "lencois", unidadeMedida: "unidade", precoCusto: "50.00", precoVenda: "125.00", pesoMedio: "1.100", estoqueMinimo: 20, ativo: true },
-    { codigo: "L004", nome: "Lençol King", categoria: "lencois", unidadeMedida: "unidade", precoCusto: "60.00", precoVenda: "150.00", pesoMedio: "1.300", estoqueMinimo: 15, ativo: true },
-    { codigo: "L005", nome: "Jogo de Lençol Solteiro", categoria: "lencois", unidadeMedida: "jogo", precoCusto: "85.00", precoVenda: "210.00", pesoMedio: "1.800", estoqueMinimo: 20, ativo: true },
-    { codigo: "L006", nome: "Jogo de Lençol Casal", categoria: "lencois", unidadeMedida: "jogo", precoCusto: "110.00", precoVenda: "275.00", pesoMedio: "2.400", estoqueMinimo: 25, ativo: true },
-    { codigo: "L007", nome: "Jogo de Lençol Queen", categoria: "lencois", unidadeMedida: "jogo", precoCusto: "135.00", precoVenda: "340.00", pesoMedio: "3.000", estoqueMinimo: 18, ativo: true },
-    { codigo: "L008", nome: "Jogo de Lençol King", categoria: "lencois", unidadeMedida: "jogo", precoCusto: "160.00", precoVenda: "400.00", pesoMedio: "3.600", estoqueMinimo: 15, ativo: true },
-    
-    // Outros produtos
-    { codigo: "O001", nome: "Capa de Almofada", categoria: "outros", unidadeMedida: "unidade", precoCusto: "12.00", precoVenda: "30.00", pesoMedio: "0.250", estoqueMinimo: 40, ativo: true },
-    { codigo: "O002", nome: "Edredom Casal", categoria: "outros", unidadeMedida: "unidade", precoCusto: "80.00", precoVenda: "200.00", pesoMedio: "1.500", estoqueMinimo: 15, ativo: true },
-    { codigo: "O003", nome: "Manta de Sofá", categoria: "outros", unidadeMedida: "unidade", precoCusto: "35.00", precoVenda: "88.00", pesoMedio: "0.600", estoqueMinimo: 25, ativo: true },
-    { codigo: "O004", nome: "Cortina", categoria: "outros", unidadeMedida: "unidade", precoCusto: "45.00", precoVenda: "115.00", pesoMedio: "0.800", estoqueMinimo: 20, ativo: true },
-    { codigo: "O005", nome: "Tapete", categoria: "outros", unidadeMedida: "unidade", precoCusto: "55.00", precoVenda: "140.00", pesoMedio: "1.200", estoqueMinimo: 18, ativo: true },
+    const produtos: InsertProduto[] = [
+    {
+    codigo: "TEFU",
+    nome: "Branco - Tecnopano Fur 2.2",
+    descricao: "Tecnopano Fur 2.2",
+    unidadeMedida: "20x20 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRZI",
+    nome: "Branco - Tecnopano Gr 3.3 Zig-Zag",
+    descricao: "Tecnopano Gr 3.3 Zig-Zag",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRPO",
+    nome: "Tecnopano Gr Por Kilo",
+    descricao: "Tecnopano Gr Por Kilo",
+    unidadeMedida: "50x50 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEKIOF",
+    nome: "Branco - Tecnopano Kit Oficina Limpa",
+    descricao: "Tecnopano Kit Oficina Limpa",
+    unidadeMedida: "37x37 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TELEBR",
+    nome: "Tecnopano Lençol Branco Maca",
+    descricao: "Tecnopano Lençol Branco Maca",
+    unidadeMedida: "1.10x2.20 M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEMAES",
+    nome: "Branco - Tecnopano Malha Esp 2.2",
+    descricao: "Tecnopano Malha Esp 2.2",
+    unidadeMedida: "20x20 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TESAAL",
+    nome: "Branco - Tecnopano Saco Alvejado Para Limpeza",
+    descricao: "Tecnopano Saco Alvejado Para Limpeza",
+    unidadeMedida: "50x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPAMI",
+    nome: "Tecnopano Pano Microfibra",
+    descricao: "Tecnopano Pano Microfibra",
+    unidadeMedida: "33x33 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TELEBR",
+    nome: "Tecnopano Lençol Branco Queen",
+    descricao: "Tecnopano Lençol Branco Queen",
+    unidadeMedida: "2.80x2.00 M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEMAES",
+    nome: "Branco - Tecnopano Malha Especial 4.4",
+    descricao: "Tecnopano Malha Especial 4.4",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBADE",
+    nome: "Tecnopano Barreiras De Contenção",
+    descricao: "Tecnopano Barreiras De Contenção",
+    unidadeMedida: "80 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPAPA",
+    nome: "Vermelho - Tecnopano Panos Para Limpeza Industrial Tipo A9",
+    descricao: "Tecnopano Panos Para Limpeza Industrial Tipo A9",
+    unidadeMedida: "33x33 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPAPA",
+    nome: "Azul - Tecnopano Panos Para Limpeza Industrial Tipo A9",
+    descricao: "Tecnopano Panos Para Limpeza Industrial Tipo A9",
+    unidadeMedida: "33x33 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPAPA",
+    nome: "Tecnopano Panos Para Limpeza Industrial Tipo A9",
+    descricao: "Tecnopano Panos Para Limpeza Industrial Tipo A9",
+    unidadeMedida: "33x33 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPAPA",
+    nome: "Verde - Tecnopano Panos Para Limpeza Industrial Tipo A9",
+    descricao: "Tecnopano Panos Para Limpeza Industrial Tipo A9",
+    unidadeMedida: "33x33 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 3.35 Corte Reto",
+    descricao: "Tecnopano Br Algodão 3.35 Corte Reto",
+    unidadeMedida: "30x35 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 2.2 Zig-Zag",
+    descricao: "Tecnopano Br Algodão 2.2 Zig-Zag",
+    unidadeMedida: "20x20 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 3.2 Zig-Zag",
+    descricao: "Tecnopano Br Algodão 3.2 Zig-Zag",
+    unidadeMedida: "30x20 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 3.3 Zig-Zag",
+    descricao: "Tecnopano Br Algodão 3.3 Zig-Zag",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Cinza - Tecnopano Gr Diversas Cores 3.3 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 3.3 Zig-Zag",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 4.4 Zig-Zag",
+    descricao: "Tecnopano Br Algodão 4.4 Zig-Zag",
+    unidadeMedida: "40x50 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 5.5 Por Kilo",
+    descricao: "Tecnopano Br Algodão 5.5 Por Kilo",
+    unidadeMedida: "50x50 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 80X100 Cort",
+    descricao: "Tecnopano Br Algodão 80X100 Cort",
+    unidadeMedida: "80x100 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 4.5 Zig-Zag",
+    descricao: "Tecnopano Br Algodão 4.5 Zig-Zag",
+    unidadeMedida: "40x50 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 2.2 Overlok",
+    descricao: "Tecnopano Br Algodão 2.2 Overlok",
+    unidadeMedida: "20x20 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Azul - Tecnopano Gr Diversas Cores 3.3 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 3.3 Zig-Zag",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão Frz Por Kilo 4.6",
+    descricao: "Tecnopano Br Algodão Frz Por Kilo 4.6",
+    unidadeMedida: "40x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Verde - Tecnopano Gr Diversas Cores 3.3 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 3.3 Zig-Zag",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 4.7 Por Kilo",
+    descricao: "Tecnopano Br Algodão 4.7 Por Kilo",
+    unidadeMedida: "40x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Cinza - Tecnopano Gr Diversas Cores 4.4 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 4.4 Zig-Zag",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Branco - Tecnopano Gr Diversas Cores 3.3 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 3.3 Zig-Zag",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Branco - Tecnopano Gr Diversas Cores 4.4 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 4.4 Zig-Zag",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "RETEPA",
+    nome: "Branco - Retalho Textil Para Beneficiamento",
+    descricao: "Retalho Textil Para Beneficiamento",
+    unidadeMedida: "Infinita",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Branco - Tecnopano Gr Diversas Cores 8.8 Overlok",
+    descricao: "Tecnopano Gr Diversas Cores 8.8 Overlok",
+    unidadeMedida: "80x80 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Cinza - Tecnopano Gr Diversas Cores 8.8 Overlok",
+    descricao: "Tecnopano Gr Diversas Cores 8.8 Overlok",
+    unidadeMedida: "80x80 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Verde - Tecnopano Gr Diversas Cores 4.4 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 4.4 Zig-Zag",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Verde - Tecnopano Gr Diversas Cores 8.8 Overlok",
+    descricao: "Tecnopano Gr Diversas Cores 8.8 Overlok",
+    unidadeMedida: "80x80 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Azul - Tecnopano Gr Diversas Cores 8.8 Overlok",
+    descricao: "Tecnopano Gr Diversas Cores 8.8 Overlok",
+    unidadeMedida: "80x80 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Azul - Tecnopano Gr Diversas Cores 4.4 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 4.4 Zig-Zag",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRZI",
+    nome: "Azul - Tecnopano Gr 3.3 Zig-Zag",
+    descricao: "Tecnopano Gr 3.3 Zig-Zag",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEFAIN",
+    nome: "Branco - Tecnopano Faixa Ind Branca Por Kilo",
+    descricao: "Tecnopano Faixa Ind Branca Por Kilo",
+    unidadeMedida: "25x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEESPO",
+    nome: "Estopa Crua - Tecnopano Estopas Por Kilo",
+    descricao: "Tecnopano Estopas Por Kilo",
+    unidadeMedida: "Variável",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRZI",
+    nome: "Cinza - Tecnopano Gr 3.3 Zig-Zag",
+    descricao: "Tecnopano Gr 3.3 Zig-Zag",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRZI",
+    nome: "Branco - Tecnopano Gr 3.3 Zig-Zag",
+    descricao: "Tecnopano Gr 3.3 Zig-Zag",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRZI",
+    nome: "Verde - Tecnopano Gr 3.3 Zig-Zag",
+    descricao: "Tecnopano Gr 3.3 Zig-Zag",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRPO",
+    nome: "Tecnopano Gr Por Kilo",
+    descricao: "Tecnopano Gr Por Kilo",
+    unidadeMedida: "50x50 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEMAAB",
+    nome: "Branco - Tecnopano Manta Absorção 4.5",
+    descricao: "Tecnopano Manta Absorção 4.5",
+    unidadeMedida: "40x50 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TETRCO",
+    nome: "Tecnopano  Trapo colorido por kilo",
+    descricao: "Tecnopano  Trapo colorido por kilo",
+    unidadeMedida: "15x15 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPATE",
+    nome: "Tecnopano Pano Tecnolim",
+    descricao: "Tecnopano Pano Tecnolim",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TETL",
+    nome: "Preto - Tecnopano Tl 3.3",
+    descricao: "Tecnopano Tl 3.3",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TETL",
+    nome: "Azul - Tecnopano Tl 3.3",
+    descricao: "Tecnopano Tl 3.3",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TETL",
+    nome: "Branco - Tecnopano Tl 3.3",
+    descricao: "Tecnopano Tl 3.3",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TETNLI",
+    nome: "Branco - Tecnopano Tnt Liso 3.3",
+    descricao: "Tecnopano Tnt Liso 3.3",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPPA9",
+    nome: "Verde - Tecnopano Pp A9",
+    descricao: "Tecnopano Pp A9",
+    unidadeMedida: "33x33 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEMAAL",
+    nome: "Branco - Tecnopano Malha Algodão",
+    descricao: "Tecnopano Malha Algodão ",
+    unidadeMedida: "20x20 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPPA9",
+    nome: "Azul - Tecnopano Pp A9",
+    descricao: "Tecnopano Pp A9",
+    unidadeMedida: "33x33 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRBR",
+    nome: "Tecnopano Gr Branco 4.4 Overlok",
+    descricao: "Tecnopano Gr Branco 4.4 Overlok",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPPA9",
+    nome: "Tecnopano Pp A9",
+    descricao: "Tecnopano Pp A9",
+    unidadeMedida: "33x33 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGROV",
+    nome: "Tecnopano Gr 3.5 Overlok",
+    descricao: "Tecnopano Gr 3.5 Overlok",
+    unidadeMedida: "35x35 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPPA9",
+    nome: "Vermelho - Tecnopano Pp A9",
+    descricao: "Tecnopano Pp A9",
+    unidadeMedida: "33x33 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 4.6 Frz Corte Reto",
+    descricao: "Tecnopano Br Algodão 4.6 Frz Corte Reto",
+    unidadeMedida: "40x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "H-LI40",
+    nome: "Branco - H-Pano Limpeza 40X40 Cm Costurado Pac 100",
+    descricao: "H-Pano Limpeza 40X40 Cm Costurado Pac 100",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEMAAL",
+    nome: "Branco - Tecnopano Malha Algodão Por Kilo",
+    descricao: "Tecnopano Malha Algodão Por Kilo",
+    unidadeMedida: "12x12 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEA9PO",
+    nome: "Tecnopano A9 Por Kilo",
+    descricao: "Tecnopano A9 Por Kilo",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TETET3",
+    nome: "Branco - Tecnopano Tecnowipers t 30X30 Pct Com 50 Und",
+    descricao: "Tecnopano Tecnowipers t 30X30 Pct Com 50 Und",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEA2",
+    nome: "Tecnopano A2 4.7",
+    descricao: "Tecnopano A2 4.7",
+    unidadeMedida: "40x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEAT",
+    nome: "Branco - Tecnopano Atm",
+    descricao: "Tecnopano Atm",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEFU",
+    nome: "Branco - Tecnopano Fur 4.8",
+    descricao: "Tecnopano Fur 4.8",
+    unidadeMedida: "40x80 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPAAL",
+    nome: "Branco - Tecnopano Pano Algodao 4.3 Overlok",
+    descricao: "Tecnopano Pano Algodao 4.3 Overlok",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPARE",
+    nome: "Branco - Tecnopano Pano Reciclado 30X40 Overlok",
+    descricao: "Tecnopano Pano Reciclado 30X40 Overlok",
+    unidadeMedida: "30x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Cinza - Tecnopano Gr Diversas Cores 5.7 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 5.7 Zig-Zag",
+    unidadeMedida: "50x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Azul - Tecnopano Gr Diversas Cores 5.7 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 5.7 Zig-Zag",
+    unidadeMedida: "50x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Tecnopano Br Algodão Listrado 4.4",
+    descricao: "Tecnopano Br Algodão Listrado 4.4",
+    unidadeMedida: "37x37 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEFRPO",
+    nome: "Branco - Tecnopano Fronha Por Kilo",
+    descricao: "Tecnopano Fronha Por Kilo",
+    unidadeMedida: "40x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Tecnopano Gru Diversas Cores 3.4",
+    descricao: "Tecnopano Gru Diversas Cores 3.4",
+    unidadeMedida: "30x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Branco - Tecnopano Gr Diversas Cores 5.7 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 5.7 Zig-Zag",
+    unidadeMedida: "50x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEFAIN",
+    nome: "Tecnopano Faixa Ind Colorida Por Kilo",
+    descricao: "Tecnopano Faixa Ind Colorida Por Kilo",
+    unidadeMedida: "25x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Verde - Tecnopano Gr Diversas Cores 5.7 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 5.7 Zig-Zag",
+    unidadeMedida: "50x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPEPÓ",
+    nome: "Branco - Tecnopano Pega Pó 40X40 Sem Impregnação",
+    descricao: "Tecnopano Pega Pó 40X40 Sem Impregnação",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEREMA",
+    nome: "Branco - Tecnopano Retalho Material Sintetico Por Kilo",
+    descricao: "Tecnopano Retalho Material Sintetico Por Kilo",
+    unidadeMedida: "Variável",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPEPÓ",
+    nome: "Branco - Tecnopano Pega Pó 4.4 Sem Impregnação",
+    descricao: "Tecnopano Pega Pó 4.4 Sem Impregnação",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 4.4 Com Overlok",
+    descricao: "Tecnopano Br Algodão 4.4 Com Overlok",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TETEME",
+    nome: "Branco - Tecnopano Tecnowipers  Medida 10X10",
+    descricao: "Tecnopano Tecnowipers  Medida 10X10",
+    unidadeMedida: "10x10 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 3.2 Com Overlok",
+    descricao: "Tecnopano Br Algodão 3.2 Com Overlok",
+    unidadeMedida: "30x20 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEENPO",
+    nome: "Branco - Tecnopano Enxoval Por Kilo",
+    descricao: "Tecnopano Enxoval Por Kilo",
+    unidadeMedida: "Todos",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRKI",
+    nome: "Tecnopano Gr 4.4 Kilo",
+    descricao: "Tecnopano Gr 4.4 Kilo",
+    unidadeMedida: "50x50 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 3.4 Kilo",
+    descricao: "Tecnopano Br Algodão 3.4 Kilo",
+    unidadeMedida: "30x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEFU",
+    nome: "Branco - Tecnopano Fur 4.4",
+    descricao: "Tecnopano Fur 4.4",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPAFU",
+    nome: "Branco - Tecnopano Pano Fur 4.4",
+    descricao: "Tecnopano Pano Fur 4.4",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBRAL",
+    nome: "Branco - Tecnopano Br Algodão 3.4 Zig-Zag",
+    descricao: "Tecnopano Br Algodão 3.4 Zig-Zag",
+    unidadeMedida: "30x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TETECO",
+    nome: "Branco - Tecnopano Tecnowipers  Com 100 Kilo",
+    descricao: "Tecnopano Tecnowipers  Com 100 Kilo",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRPO",
+    nome: "Tecnopano Gru 4.7 Por Kilo",
+    descricao: "Tecnopano Gru 4.7 Por Kilo",
+    unidadeMedida: "40x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEUN",
+    nome: "Tecnopano Uniformes",
+    descricao: "Tecnopano Uniformes",
+    unidadeMedida: "P",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEUN",
+    nome: "Tecnopano Uniformes",
+    descricao: "Tecnopano Uniformes",
+    unidadeMedida: "M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEUN",
+    nome: "Tecnopano Uniformes",
+    descricao: "Tecnopano Uniformes",
+    unidadeMedida: "G",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEUN",
+    nome: "Tecnopano Uniforme",
+    descricao: "Tecnopano Uniforme",
+    unidadeMedida: "GG",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEAVVE",
+    nome: "Tecnopano Avental Verde",
+    descricao: "Tecnopano Avental Verde",
+    unidadeMedida: "P",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEAVVE",
+    nome: "Tecnopano Avental Verde",
+    descricao: "Tecnopano Avental Verde",
+    unidadeMedida: "M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEAVVE",
+    nome: "Tecnopano Avental Verde",
+    descricao: "Tecnopano Avental Verde",
+    unidadeMedida: "G",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEAVVE",
+    nome: "Tecnopano Avental Verde",
+    descricao: "Tecnopano Avental Verde",
+    unidadeMedida: "GG",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "GSBROV",
+    nome: "Gs Branco Overlocado  Sabesp",
+    descricao: "Gs Branco Overlocado  Sabesp",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEFR",
+    nome: "Florzinha - Tecnopano Vestimenta Frz Unidade",
+    descricao: "Tecnopano Vestimenta Frz Unidade",
+    unidadeMedida: "P",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEFR",
+    nome: "Florzinha - Tecnopano Vestimenta Frz Unidade",
+    descricao: "Tecnopano Vestimenta Frz Unidade",
+    unidadeMedida: "M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEFR",
+    nome: "Florzinha - Tecnopano Vestimenta Frz Unidade",
+    descricao: "Tecnopano Vestimenta Frz Unidade",
+    unidadeMedida: "G",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEFR",
+    nome: "Florzinha - Tecnopano Vestimenta Frz Unidade 4.7",
+    descricao: "Tecnopano Vestimenta Frz Unidade 4.7",
+    unidadeMedida: "4.7",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEDE",
+    nome: "Tecnopano Vestimenta De Proteção Individual",
+    descricao: "Tecnopano Vestimenta De Proteção Individual",
+    unidadeMedida: "P",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEDE",
+    nome: "Tecnopano Vestimenta De Proteção Individual",
+    descricao: "Tecnopano Vestimenta De Proteção Individual",
+    unidadeMedida: "M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEMAAB",
+    nome: "Branco - Tecnopano Manta Absorção 4.5",
+    descricao: "Tecnopano Manta Absorção 4.5",
+    unidadeMedida: "40x50 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEDE",
+    nome: "Tecnopano Vestimenta De Proteção Individual",
+    descricao: "Tecnopano Vestimenta De Proteção Individual",
+    unidadeMedida: "GG",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEDE",
+    nome: "Tecnopano Vestimenta De Proteção Individual",
+    descricao: "Tecnopano Vestimenta De Proteção Individual",
+    unidadeMedida: "G",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEDE",
+    nome: "Tecnopano Vestimenta De Proteção Individual Diversas Cores",
+    descricao: "Tecnopano Vestimenta De Proteção Individual Diversas Cores",
+    unidadeMedida: "P",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEDE",
+    nome: "Tecnopano Vestimenta De Proteção Individual Diversas Cores",
+    descricao: "Tecnopano Vestimenta De Proteção Individual Diversas Cores",
+    unidadeMedida: "M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEBADE",
+    nome: "Tecnopano Barreiras De Contenção",
+    descricao: "Tecnopano Barreiras De Contenção",
+    unidadeMedida: "80 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEDE",
+    nome: "Tecnopano Vestimenta De Proteção Individual Diversas Cores",
+    descricao: "Tecnopano Vestimenta De Proteção Individual Diversas Cores",
+    unidadeMedida: "G",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEDE",
+    nome: "Tecnopano Vestimenta De Proteção Individual Diversas Cores",
+    descricao: "Tecnopano Vestimenta De Proteção Individual Diversas Cores",
+    unidadeMedida: "GG",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPALU",
+    nome: "Cinza - Tecnopano Par Luvas",
+    descricao: "Tecnopano Par Luvas",
+    unidadeMedida: "P",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPALU",
+    nome: "Cinza - Tecnopano Par Luvas",
+    descricao: "Tecnopano Par Luvas",
+    unidadeMedida: "G",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPALU",
+    nome: "Cinza - Tecnopano Par Luvas",
+    descricao: "Tecnopano Par Luvas",
+    unidadeMedida: "GG",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPALU",
+    nome: "Cinza - Tecnopano Par Luvas",
+    descricao: "Tecnopano Par Luvas",
+    unidadeMedida: "M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TECATR",
+    nome: "Tecnopano Capote Traçado",
+    descricao: "Tecnopano Capote Traçado",
+    unidadeMedida: "2.00x1.00 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TECOHI",
+    nome: "Bege - Tecnopano Conjunto Hidrorepelente Para Reforma",
+    descricao: "Tecnopano Conjunto Hidrorepelente Para Reforma",
+    unidadeMedida: "P",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEFR",
+    nome: "Tecnopano Vestimenta Frz Unidade",
+    descricao: "Tecnopano Vestimenta Frz Unidade",
+    unidadeMedida: "P",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEFR",
+    nome: "Tecnopano Vestimenta Frz Unidade",
+    descricao: "Tecnopano Vestimenta Frz Unidade",
+    unidadeMedida: "M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEFR",
+    nome: "Tecnopano Vestimenta Frz Unidade",
+    descricao: "Tecnopano Vestimenta Frz Unidade",
+    unidadeMedida: "G",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEVEFR",
+    nome: "Tecnopano Vestimenta Frz Unidade",
+    descricao: "Tecnopano Vestimenta Frz Unidade",
+    unidadeMedida: "GG",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TECOHI",
+    nome: "Verde - Tecnopano Conjunto Hidrorepelente Para Reforma",
+    descricao: "Tecnopano Conjunto Hidrorepelente Para Reforma",
+    unidadeMedida: "M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TECOHI",
+    nome: "Verde - Tecnopano Conjunto Hidrorepelente Para Reforma",
+    descricao: "Tecnopano Conjunto Hidrorepelente Para Reforma",
+    unidadeMedida: "GG",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TECOHI",
+    nome: "Verde - Tecnopano Conjunto Hidrorepelente Para Reforma",
+    descricao: "Tecnopano Conjunto Hidrorepelente Para Reforma",
+    unidadeMedida: "P",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TECOHI",
+    nome: "Bege - Tecnopano Conjunto Hidrorepelente Para Reforma",
+    descricao: "Tecnopano Conjunto Hidrorepelente Para Reforma",
+    unidadeMedida: "M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TECOHI",
+    nome: "Verde - Tecnopano Conjunto Hidrorepelente Para Reforma",
+    descricao: "Tecnopano Conjunto Hidrorepelente Para Reforma",
+    unidadeMedida: "G",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPADE",
+    nome: "Branco - Tecnopano Par De Luvas De Raspa",
+    descricao: "Tecnopano Par De Luvas De Raspa",
+    unidadeMedida: "P",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TECOHI",
+    nome: "Bege - Tecnopano Conjunto Hidrorepelente Para Reforma",
+    descricao: "Tecnopano Conjunto Hidrorepelente Para Reforma",
+    unidadeMedida: "GG",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TECOHI",
+    nome: "Bege - Tecnopano Conjunto Hidrorepelente Para Reforma",
+    descricao: "Tecnopano Conjunto Hidrorepelente Para Reforma",
+    unidadeMedida: "G",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPADE",
+    nome: "Branco - Tecnopano Par De Luvas De Raspa",
+    descricao: "Tecnopano Par De Luvas De Raspa",
+    unidadeMedida: "M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPADE",
+    nome: "Preto - Tecnopano Par De Luvas De Raspa",
+    descricao: "Tecnopano Par De Luvas De Raspa",
+    unidadeMedida: "P",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPADE",
+    nome: "Branco - Tecnopano Par De Luvas De Raspa",
+    descricao: "Tecnopano Par De Luvas De Raspa",
+    unidadeMedida: "G",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPADE",
+    nome: "Preto - Tecnopano Par De Luvas De Raspa",
+    descricao: "Tecnopano Par De Luvas De Raspa",
+    unidadeMedida: "M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPADE",
+    nome: "Preto - Tecnopano Par De Luvas De Raspa",
+    descricao: "Tecnopano Par De Luvas De Raspa",
+    unidadeMedida: "G",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TELUDE",
+    nome: "Preto - Tecnopano Luvas De Malha E Raspa",
+    descricao: "Tecnopano Luvas De Malha E Raspa",
+    unidadeMedida: "P",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TELUDE",
+    nome: "Preto - Tecnopano Luvas De Malha E Raspa",
+    descricao: "Tecnopano Luvas De Malha E Raspa",
+    unidadeMedida: "M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPADE",
+    nome: "Preto - Tecnopano Par De Luvas De Raspa",
+    descricao: "Tecnopano Par De Luvas De Raspa",
+    unidadeMedida: "GG",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEPADE",
+    nome: "Branco - Tecnopano Par De Luvas De Raspa",
+    descricao: "Tecnopano Par De Luvas De Raspa",
+    unidadeMedida: "GG",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TELUDE",
+    nome: "Branco - Tecnopano Luvas De Malha E Raspa",
+    descricao: "Tecnopano Luvas De Malha E Raspa",
+    unidadeMedida: "P",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TELUDE",
+    nome: "Branco - Tecnopano Luvas De Malha E Raspa",
+    descricao: "Tecnopano Luvas De Malha E Raspa",
+    unidadeMedida: "M",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TELUDE",
+    nome: "Branco - Tecnopano Luvas De Malha E Raspa",
+    descricao: "Tecnopano Luvas De Malha E Raspa",
+    unidadeMedida: "G",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TELUDE",
+    nome: "Branco - Tecnopano Luvas De Malha E Raspa",
+    descricao: "Tecnopano Luvas De Malha E Raspa",
+    unidadeMedida: "GG",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TELUDE",
+    nome: "Preto - Tecnopano Luvas De Malha E Raspa",
+    descricao: "Tecnopano Luvas De Malha E Raspa",
+    unidadeMedida: "G",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEMAFI",
+    nome: "Tecnopano Manta Fina Reciclad",
+    descricao: "Tecnopano Manta Fina Reciclad",
+    unidadeMedida: "1.10x2.20 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGAP",
+    nome: "Dourada - Tecnopano Gaiola P",
+    descricao: "Tecnopano Gaiola P",
+    unidadeMedida: "1.80x0.50 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGAG",
+    nome: "Cinza - Tecnopano Gaiola G",
+    descricao: "Tecnopano Gaiola G",
+    unidadeMedida: "1.00x1.70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEMARE",
+    nome: "Tecnopano Manta Reciclada",
+    descricao: "Tecnopano Manta Reciclada",
+    unidadeMedida: "1.10x2.20 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TECADE",
+    nome: "Branco - Tecnopano Capa de Fardo",
+    descricao: "Tecnopano Capa de Fardo",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEEDKI",
+    nome: "Branco - Tecnopano Edredon Kilo",
+    descricao: "Tecnopano Edredon Kilo",
+    unidadeMedida: "1.20x2.40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TELUDE",
+    nome: "Preto - Tecnopano Luvas De Malha E Raspa",
+    descricao: "Tecnopano Luvas De Malha E Raspa",
+    unidadeMedida: "GG",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TOPOKI",
+    nome: "Branco - Toalha por Kilo",
+    descricao: "Toalha por Kilo",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "CAFACO",
+    nome: "Branco - Capa Fardo Corte Reto 4.5",
+    descricao: "Capa Fardo Corte Reto 4.5",
+    unidadeMedida: "40x50 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Tecnopano Gr Diversas Cores 3.5 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 3.5 Zig-Zag",
+    unidadeMedida: "35X35 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "TEGRDI",
+    nome: "Tecnopano Gr Diversas Cores 3.5 x 7.0 Zig-Zag",
+    descricao: "Tecnopano Gr Diversas Cores 3.5 x 7.0 Zig-Zag",
+    unidadeMedida: "35x70 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "GRLA",
+    nome: "Variados - Gr2 lavado",
+    descricao: "Gr2 lavado",
+    unidadeMedida: "3.4",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "GRKG",
+    nome: "GR KG 4.4",
+    descricao: "GR KG 4.4",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "AVTEFR",
+    nome: "Branco - Avental tecnopano Frz unidade cod 000008",
+    descricao: "Avental tecnopano Frz unidade cod 000008",
+    unidadeMedida: "P,M,G,GG",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "BROVPO",
+    nome: "BR overlocado por kilo",
+    descricao: "BR overlocado por kilo",
+    unidadeMedida: "30x30 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "BROVPO",
+    nome: "BR overlocado por kilo",
+    descricao: "BR overlocado por kilo",
+    unidadeMedida: "40x40 Cm",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  },
+    {
+    codigo: "CACITE",
+    nome: "Campo cirúrgico tecnopano",
+    descricao: "Campo cirúrgico tecnopano",
+    unidadeMedida: "Variado",
+    precoCusto: "0.00",
+    precoVenda: "0.00",
+    ativo: true
+  }
   ];
 
   console.log(`📦 Inserindo ${produtos.length} produtos...`);
