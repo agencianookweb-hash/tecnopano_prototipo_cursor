@@ -1,11 +1,8 @@
 import { storage } from './storage';
 import type { InsertProduto, InsertCliente, InsertFornecedor } from '@shared/schema';
 
-async function seed() {
-  console.log('🌱 Iniciando seed do banco de dados...\n');
-
-  // ==================== FORNECEDORES ====================
-        const fornecedores: InsertFornecedor[] = [
+// Exportar arrays de dados para uso no MemStorage
+export const fornecedoresSeed: InsertFornecedor[] = [
     {
     nome: "ATMOSFERA - SP - DIADEMA",
     razaoSocial: "ATMOSFERA GESTAO E HIGIENIZACAO DE TEXTEIS S.A.",
@@ -747,10 +744,14 @@ async function seed() {
     contato: "47-992005758",
     ativo: true
   }
-  ];
+];
 
-  console.log(`📦 Inserindo ${fornecedores.length} fornecedores...`);
-  for (const fornecedor of fornecedores) {
+async function seed() {
+  console.log('🌱 Iniciando seed do banco de dados...\n');
+
+  // ==================== FORNECEDORES ====================
+  console.log(`📦 Inserindo ${fornecedoresSeed.length} fornecedores...`);
+  for (const fornecedor of fornecedoresSeed) {
     await storage.createFornecedor(fornecedor);
   }
   const totalFornecedores = (await storage.getFornecedores()).length;

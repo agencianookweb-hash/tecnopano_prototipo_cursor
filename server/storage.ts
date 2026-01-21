@@ -375,61 +375,85 @@ export class MemStorage implements IStorage {
 
   // ==================== SEED DATA ====================
   private seedData() {
-    // Seed fornecedores
-    const fornecedor1Id = randomUUID();
-    const fornecedor2Id = randomUUID();
-    const fornecedor3Id = randomUUID();
+    // Importar dados do seed.ts dinamicamente
+    try {
+      const seedModule = require('./seed');
+      const fornecedoresSeed = seedModule.fornecedoresSeed || [];
+      
+      // Criar todos os fornecedores do seed
+      for (const fornecedorData of fornecedoresSeed) {
+        const id = randomUUID();
+        const fornecedor: Fornecedor = {
+          ...fornecedorData,
+          id,
+          ativo: fornecedorData.ativo ?? true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        this.fornecedores.set(id, fornecedor);
+      }
+      
+      console.log(`✅ ${fornecedoresSeed.length} fornecedores carregados no MemStorage`);
+    } catch (error) {
+      // Se falhar, usar dados padrão (3 fornecedores)
+      console.warn('⚠️ Erro ao carregar seed completo, usando dados padrão:', error);
+      
+      // Seed fornecedores padrão (3)
+      const fornecedor1Id = randomUUID();
+      const fornecedor2Id = randomUUID();
+      const fornecedor3Id = randomUUID();
 
-    this.fornecedores.set(fornecedor1Id, {
-      id: fornecedor1Id,
-      nome: "ATMOSFERA GESTÃO E HIGIENIZAÇÃO",
-      razaoSocial: "Atmosfera Gestão e Higienização Ltda",
-      cnpj: "12.345.678/0001-90",
-      endereco: "Rua das Indústrias, 100",
-      cidade: "São Paulo",
-      estado: "SP",
-      cep: "01234-567",
-      telefone: "(11) 3333-4444",
-      email: "contato@atmosfera.com.br",
-      contato: "Maria Silva",
-      ativo: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+      this.fornecedores.set(fornecedor1Id, {
+        id: fornecedor1Id,
+        nome: "ATMOSFERA GESTÃO E HIGIENIZAÇÃO",
+        razaoSocial: "Atmosfera Gestão e Higienização Ltda",
+        cnpj: "12.345.678/0001-90",
+        endereco: "Rua das Indústrias, 100",
+        cidade: "São Paulo",
+        estado: "SP",
+        cep: "01234-567",
+        telefone: "(11) 3333-4444",
+        email: "contato@atmosfera.com.br",
+        contato: "Maria Silva",
+        ativo: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
 
-    this.fornecedores.set(fornecedor2Id, {
-      id: fornecedor2Id,
-      nome: "SUL AMERICANA",
-      razaoSocial: "Sul Americana Têxtil S.A.",
-      cnpj: "23.456.789/0001-01",
-      endereco: "Av. do Estado, 500",
-      cidade: "São Paulo",
-      estado: "SP",
-      cep: "02345-678",
-      telefone: "(11) 5555-6666",
-      email: "comercial@sulamericana.com.br",
-      contato: "João Santos",
-      ativo: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+      this.fornecedores.set(fornecedor2Id, {
+        id: fornecedor2Id,
+        nome: "SUL AMERICANA",
+        razaoSocial: "Sul Americana Têxtil S.A.",
+        cnpj: "23.456.789/0001-01",
+        endereco: "Av. do Estado, 500",
+        cidade: "São Paulo",
+        estado: "SP",
+        cep: "02345-678",
+        telefone: "(11) 5555-6666",
+        email: "comercial@sulamericana.com.br",
+        contato: "João Santos",
+        ativo: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
 
-    this.fornecedores.set(fornecedor3Id, {
-      id: fornecedor3Id,
-      nome: "ECO TÊXTIL LTDA",
-      razaoSocial: "Eco Têxtil Ltda",
-      cnpj: "34.567.890/0001-12",
-      endereco: "Rod. Anchieta, Km 12",
-      cidade: "São Bernardo do Campo",
-      estado: "SP",
-      cep: "09876-543",
-      telefone: "(11) 7777-8888",
-      email: "atendimento@ecotextil.com.br",
-      contato: "Pedro Oliveira",
-      ativo: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+      this.fornecedores.set(fornecedor3Id, {
+        id: fornecedor3Id,
+        nome: "ECO TÊXTIL LTDA",
+        razaoSocial: "Eco Têxtil Ltda",
+        cnpj: "34.567.890/0001-12",
+        endereco: "Rod. Anchieta, Km 12",
+        cidade: "São Bernardo do Campo",
+        estado: "SP",
+        cep: "09876-543",
+        telefone: "(11) 7777-8888",
+        email: "atendimento@ecotextil.com.br",
+        contato: "Pedro Oliveira",
+        ativo: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    }
 
     // Seed usuário admin
     const adminId = randomUUID();
