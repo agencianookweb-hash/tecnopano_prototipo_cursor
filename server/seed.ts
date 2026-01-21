@@ -13297,7 +13297,7 @@ async function seed() {
   console.log(`✅ Clientes inseridos: ${totalClientes}\n`);
 
   // ==================== PRODUTOS ====================
-    produtosSeed = [
+  produtosSeed = [
     {
     codigo: "37",
     nome: "Tecnopano Fur 2.2",
@@ -15594,7 +15594,7 @@ async function seed() {
     precoVenda: "0.00",
     ativo: true
   }
-
+  ];
 
   console.log(`📦 Inserindo ${produtosSeed.length} produtos...`);
   for (const produto of produtosSeed) {
