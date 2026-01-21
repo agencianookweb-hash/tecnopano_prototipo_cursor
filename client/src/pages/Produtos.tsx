@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { 
-  Package, PackagePlus, Pencil, Trash2, Search, Filter
+  Package, PackagePlus, Pencil, Trash2, Search, Filter, ChevronLeft, ChevronRight
 } from "lucide-react";
 import { PageHeader } from "@/components/domain/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -16,6 +16,8 @@ export default function Produtos() {
   const { data: produtos, isLoading } = useProdutos();
   const deleteProduto = useDeleteProduto();
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este produto?")) {
@@ -28,13 +30,48 @@ export default function Produtos() {
     }
   };
 
-  const filteredProdutos = produtos?.filter(p => 
-    p.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.descricao?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.codigo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.acabamento?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.cor?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+
+  // Paginação
+  const filteredProdutosMemo = useMemo(() => 
+    produtos?.filter(p => 
+      p.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.descricao?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.codigo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.acabamento?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.cor?.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || []
+  , [produtos, searchTerm]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProdutosMemo.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedProdutos = useMemo(() => 
+    filteredProdutosMemo.slice(startIndex, endIndex),
+    [filteredProdutosMemo, startIndex, endIndex]
+  );
+
+  // Ajustar página atual se estiver fora do range
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [currentPage, totalPages]);
+
+  // Resetar para primeira página quando mudar filtro ou items per page
+  const handleItemsPerPageChange = (value: number) => {
+    setItemsPerPage(value);
+    setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, itemsPerPage]);
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -78,7 +115,7 @@ export default function Produtos() {
             <div>
               <CardTitle>Lista de Produtos</CardTitle>
               <CardDescription>
-                {isLoading ? "Carregando..." : `Total de ${filteredProdutos.length} produtos cadastrados`}
+                {isLoading ? "Carregando..." : `Total de ${filteredProdutosMemo.length} produtos cadastrados${filteredProdutosMemo.length > itemsPerPage ? ` - Página ${currentPage} de ${totalPages}` : ''}`}
               </CardDescription>
             </div>
           </div>
@@ -106,16 +143,16 @@ export default function Produtos() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProdutos.length === 0 ? (
+                {paginatedProdutos.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                       Nenhum produto encontrado
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredProdutos.map((produto) => (
+                  paginatedProdutos.map((produto) => (
                     <TableRow key={produto.id} className="hover:bg-muted/10 transition-colors">
-                      <TableCell className="pl-6 py-4 font-mono text-sm">{produto.codigo || produto.id.substring(0, 8)}</TableCell>
+                      <TableCell className="pl-6 py-4 font-mono text-sm">{produto.codigo || "-"}</TableCell>
                       <TableCell className="font-medium">{produto.nome || produto.descricao || "-"}</TableCell>
                       <TableCell>{produto.acabamento || "-"}</TableCell>
                       <TableCell>{produto.cor || "-"}</TableCell>
@@ -154,6 +191,74 @@ export default function Produtos() {
             </Table>
           )}
         </CardContent>
+
+        {/* Paginação */}
+        {!isLoading && filteredProdutosMemo.length > 0 && (
+          <div className="border-t border-border p-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              {/* Seleção de itens por página */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Itens por página:</span>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+                  className="px-3 py-1.5 text-sm border border-input rounded-md bg-background hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                </select>
+              </div>
+
+              {/* Informações de paginação */}
+              <div className="text-sm text-muted-foreground">
+                Mostrando {startIndex + 1} a {Math.min(endIndex, filteredProdutosMemo.length)} de {filteredProdutosMemo.length} produtos
+              </div>
+
+              {/* Controles de navegação */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={currentPage === 1 ? "default" : "outline"}
+                  size="sm"
+                  className="h-8 px-3"
+                  onClick={() => goToPage(1)}
+                  disabled={currentPage === 1}
+                >
+                  1
+                </Button>
+                {totalPages > 1 && (
+                  <Button
+                    variant={currentPage === totalPages ? "default" : "outline"}
+                    size="sm"
+                    className="h-8 px-3"
+                    onClick={() => goToPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                  >
+                    {totalPages}
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   );
