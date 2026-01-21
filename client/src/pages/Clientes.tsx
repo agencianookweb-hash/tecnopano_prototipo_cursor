@@ -33,7 +33,8 @@ export default function Clientes() {
     c.razaoSocial?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.cnpj?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.cpf?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    c.contato?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.id.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
   return (
@@ -56,7 +57,7 @@ export default function Clientes() {
             <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input 
-                placeholder="Buscar por nome fantasia, razão social, CPF/CNPJ ou email..." 
+                placeholder="Buscar por nome fantasia, razão social, CPF/CNPJ, contato ou ID..." 
                 className="pl-9 bg-muted/30 border-muted"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -95,11 +96,12 @@ export default function Clientes() {
             <Table>
               <TableHeader className="bg-muted/30">
                 <TableRow>
-                  <TableHead className="pl-6">Nome Fantasia</TableHead>
+                  <TableHead className="pl-6">ID</TableHead>
+                  <TableHead>Nome Fantasia</TableHead>
                   <TableHead>Razão Social</TableHead>
                   <TableHead>Tipo</TableHead>
                   <TableHead>CPF/CNPJ</TableHead>
-                  <TableHead>Email</TableHead>
+                  <TableHead>Contato</TableHead>
                   <TableHead>Telefone</TableHead>
                   <TableHead>Cidade</TableHead>
                   <TableHead>Estado</TableHead>
@@ -110,14 +112,17 @@ export default function Clientes() {
               <TableBody>
                 {filteredClientes.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={11} className="text-center py-8 text-muted-foreground">
                       Nenhum cliente encontrado
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredClientes.map((cliente) => (
                     <TableRow key={cliente.id} className="hover:bg-muted/10 transition-colors">
-                      <TableCell className="pl-6 py-4 font-medium">{cliente.nome}</TableCell>
+                      <TableCell className="pl-6 py-4 font-mono text-xs text-muted-foreground">
+                        {cliente.id.substring(0, 8)}
+                      </TableCell>
+                      <TableCell className="font-medium">{cliente.nome}</TableCell>
                       <TableCell>{cliente.razaoSocial || "-"}</TableCell>
                       <TableCell>
                         <Badge variant="outline">
@@ -127,7 +132,7 @@ export default function Clientes() {
                       <TableCell className="font-mono text-sm">
                         {cliente.cpf || cliente.cnpj || "-"}
                       </TableCell>
-                      <TableCell>{cliente.email || "-"}</TableCell>
+                      <TableCell>{cliente.contato || "-"}</TableCell>
                       <TableCell>{cliente.telefone || "-"}</TableCell>
                       <TableCell>{cliente.cidade || "-"}</TableCell>
                       <TableCell>{cliente.estado || "-"}</TableCell>
