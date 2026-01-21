@@ -378,13 +378,13 @@ export class MemStorage implements IStorage {
 
   // ==================== SEED DATA ====================
   private async seedData() {
-    // Carregar dados do seed.ts usando require dinâmico
+    // Carregar dados do seed.ts usando import dinâmico
     // Usar try/catch para lidar com possíveis dependências circulares
     let fornecedoresSeed: InsertFornecedor[] = [];
     
     try {
-      // Tentar carregar usando require (evita problemas de import dinâmico)
-      const seedModule = require('./seed');
+      // Tentar carregar usando import dinâmico (TypeScript/ES modules)
+      const seedModule = await import('./seed');
       fornecedoresSeed = seedModule.fornecedoresSeed || [];
       
       if (fornecedoresSeed && fornecedoresSeed.length > 0) {
