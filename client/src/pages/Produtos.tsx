@@ -137,7 +137,7 @@ export default function Produtos() {
                   <TableHead>Acabamento</TableHead>
                   <TableHead>Cor</TableHead>
                   <TableHead>Medida</TableHead>
-                  <TableHead className="text-right">Preço Venda</TableHead>
+                  <TableHead>Unidade de Medida</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right pr-6">Ações</TableHead>
                 </TableRow>
@@ -156,9 +156,16 @@ export default function Produtos() {
                       <TableCell className="font-medium">{produto.nome || produto.descricao || "-"}</TableCell>
                       <TableCell>{produto.acabamento || "-"}</TableCell>
                       <TableCell>{produto.cor || "-"}</TableCell>
-                      <TableCell>{produto.medida || produto.unidadeMedida || "-"}</TableCell>
-                      <TableCell className="text-right font-medium">
-                        {produto.precoVenda ? `R$ ${Number(produto.precoVenda).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-"}
+                      <TableCell>{produto.medida || "-"}</TableCell>
+                      <TableCell>
+                        {(() => {
+                          const descricao = (produto.nome || produto.descricao || '').toLowerCase();
+                          const medida = (produto.medida || '').toLowerCase();
+                          if (descricao.includes('por kilo') || descricao.includes('por kg') || medida.includes('variável') || medida.includes('infinita')) {
+                            return 'kg';
+                          }
+                          return produto.unidadeMedida && produto.unidadeMedida !== 'unidade' ? produto.unidadeMedida : 'unidade';
+                        })()}
                       </TableCell>
                       <TableCell>
                         <Badge 
