@@ -6,9 +6,13 @@ import { fornecedoresSeed } from './fornecedores-data';
 export { fornecedoresSeed };
 
 // Exportar produtos e clientes para uso no MemStorage (sem dependência circular)
-// Estes serão definidos mais abaixo no arquivo
+// Estes serão definidos mais abaixo no arquivo - inicializados como arrays vazios
+// e preenchidos antes da função seed() ser chamada
 export let produtosSeed: InsertProduto[] = [];
 export let clientesSeed: InsertCliente[] = [];
+
+// Preencher os arrays ANTES da função seed() para que possam ser importados pelo storage.ts
+// Isso garante que os dados estejam disponíveis quando o MemStorage carregar
 
 // Mantido para referência, mas usar fornecedores-data.ts
 const fornecedoresSeedOld: InsertFornecedor[] = [
@@ -767,7 +771,7 @@ async function seed() {
   console.log(`✅ Fornecedores inseridos: ${totalFornecedores}\n`);
 
   // ==================== CLIENTES ====================
-      clientesSeed = [
+  clientesSeed = [
     {
     nome: "VICENTE DE CARVALHO, GUARUJÁ",
     tipo: 'juridica',
