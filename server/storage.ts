@@ -418,6 +418,56 @@ export class MemStorage implements IStorage {
           this.fornecedores.set(id, fornecedor);
         }
         console.log(`✅ ${fornecedoresSeed.length} fornecedores carregados e criados no MemStorage!`);
+        
+        // Carregar produtos e clientes do seed.ts
+        try {
+          console.log('📦 Tentando carregar produtos e clientes de seed.ts...');
+          await new Promise(resolve => setTimeout(resolve, 100));
+          const seedModule = await import('./seed');
+          const produtosSeed = seedModule.produtosSeed || [];
+          const clientesSeed = seedModule.clientesSeed || [];
+          
+          // Carregar produtos
+          if (produtosSeed && produtosSeed.length > 0) {
+            console.log(`📝 Criando ${produtosSeed.length} produtos no MemStorage...`);
+            for (const produtoData of produtosSeed) {
+              const id = randomUUID();
+              const produto: Produto = {
+                ...produtoData,
+                id,
+                ativo: produtoData.ativo ?? true,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              };
+              this.produtos.set(id, produto);
+            }
+            console.log(`✅ ${produtosSeed.length} produtos carregados e criados no MemStorage!`);
+          } else {
+            console.warn('⚠️ produtosSeed está vazio ou undefined');
+          }
+          
+          // Carregar clientes
+          if (clientesSeed && clientesSeed.length > 0) {
+            console.log(`📝 Criando ${clientesSeed.length} clientes no MemStorage...`);
+            for (const clienteData of clientesSeed) {
+              const id = randomUUID();
+              const cliente: Cliente = {
+                ...clienteData,
+                id,
+                ativo: clienteData.ativo ?? true,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              };
+              this.clientes.set(id, cliente);
+            }
+            console.log(`✅ ${clientesSeed.length} clientes carregados e criados no MemStorage!`);
+          } else {
+            console.warn('⚠️ clientesSeed está vazio ou undefined');
+          }
+        } catch (error: any) {
+          console.error('❌ Erro ao carregar produtos/clientes do seed:', error?.message || error);
+        }
+        
         this.createAdminUser();
         return;
       } else {

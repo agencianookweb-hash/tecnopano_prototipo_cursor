@@ -5,6 +5,11 @@ import { fornecedoresSeed } from './fornecedores-data';
 // Re-exportar para compatibilidade
 export { fornecedoresSeed };
 
+// Exportar produtos e clientes para uso no MemStorage (sem dependência circular)
+// Estes serão definidos mais abaixo no arquivo
+export let produtosSeed: InsertProduto[] = [];
+export let clientesSeed: InsertCliente[] = [];
+
 // Mantido para referência, mas usar fornecedores-data.ts
 const fornecedoresSeedOld: InsertFornecedor[] = [
     {
@@ -762,7 +767,7 @@ async function seed() {
   console.log(`✅ Fornecedores inseridos: ${totalFornecedores}\n`);
 
   // ==================== CLIENTES ====================
-      const clientes: InsertCliente[] = [
+      clientesSeed = [
     {
     nome: "VICENTE DE CARVALHO, GUARUJÁ",
     tipo: 'juridica',
@@ -13284,15 +13289,15 @@ async function seed() {
   }
   ];
 
-  console.log(`👥 Inserindo ${clientes.length} clientes...`);
-  for (const cliente of clientes) {
+  console.log(`👥 Inserindo ${clientesSeed.length} clientes...`);
+  for (const cliente of clientesSeed) {
     await storage.createCliente(cliente);
   }
   const totalClientes = (await storage.getClientes()).length;
   console.log(`✅ Clientes inseridos: ${totalClientes}\n`);
 
   // ==================== PRODUTOS ====================
-    const produtos: InsertProduto[] = [
+    produtosSeed = [
     {
     codigo: "TEFU",
     nome: "Branco - Tecnopano Fur 2.2",
@@ -14771,8 +14776,8 @@ async function seed() {
   }
   ];
 
-  console.log(`📦 Inserindo ${produtos.length} produtos...`);
-  for (const produto of produtos) {
+  console.log(`📦 Inserindo ${produtosSeed.length} produtos...`);
+  for (const produto of produtosSeed) {
     await storage.createProduto(produto);
   }
   const totalProdutos = (await storage.getProdutos()).length;
