@@ -12,6 +12,9 @@ import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/Dashboard";
 import Team from "@/pages/Team";
 import Login from "@/pages/auth/Login";
+import Produtos from "@/pages/Produtos";
+import Clientes from "@/pages/Clientes";
+import Fornecedores from "@/pages/Fornecedores";
 
 // New Flow Pages
 import SolicitacaoColeta from "@/pages/coleta/SolicitacaoColeta";
@@ -24,7 +27,16 @@ import EstoqueEntrada from "@/pages/estoque/EstoqueEntrada";
 function PrivateRoute({ component: Component, ...rest }: any) {
   const { isAuthenticated, loading } = useAuth();
   
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
   
   if (!isAuthenticated) {
     return <Redirect to="/login" />;
@@ -48,6 +60,17 @@ function Router() {
       </Route>
       <Route path="/equipe">
         {() => <PrivateRoute component={Team} />}
+      </Route>
+      
+      {/* Cadastros */}
+      <Route path="/produtos">
+        {() => <PrivateRoute component={Produtos} />}
+      </Route>
+      <Route path="/clientes">
+        {() => <PrivateRoute component={Clientes} />}
+      </Route>
+      <Route path="/fornecedores">
+        {() => <PrivateRoute component={Fornecedores} />}
       </Route>
       
       {/* Tecnopano 4.0 Flow Routes */}

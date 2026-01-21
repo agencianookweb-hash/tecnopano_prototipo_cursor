@@ -3,6 +3,16 @@ import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
+// Testar conexão com PostgreSQL se estiver configurado
+if (process.env.DATABASE_URL) {
+  import("./db").then(({ testConnection }) => {
+    testConnection().catch(console.error);
+  }).catch((err) => {
+    // Se não houver DATABASE_URL, apenas logar que está usando MemStorage
+    console.log("💾 Usando MemStorage (sem DATABASE_URL)");
+  });
+}
+
 const app = express();
 const httpServer = createServer(app);
 
@@ -91,11 +101,8 @@ app.use((req, res, next) => {
   // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || "5000", 10);
   httpServer.listen(
-    {
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    },
+    port,
+    "0.0.0.0",
     () => {
       log(`serving on port ${port}`);
     },

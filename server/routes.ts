@@ -8,6 +8,8 @@ import {
   insertSeparacaoSchema,
   insertProducaoSchema,
   insertEstoqueSchema,
+  insertProdutoSchema,
+  insertClienteSchema,
 } from "@shared/schema";
 
 export async function registerRoutes(
@@ -305,6 +307,130 @@ export async function registerRoutes(
       res.status(201).json(estoque);
     } catch (error: any) {
       res.status(400).json({ message: error.message || "Dados inválidos" });
+    }
+  });
+
+  // ==================== PRODUTOS ====================
+  app.get("/api/produtos", async (_req, res) => {
+    try {
+      const produtos = await storage.getProdutos();
+      res.json(produtos);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar produtos" });
+    }
+  });
+
+  app.get("/api/produtos/:id", async (req, res) => {
+    try {
+      const produto = await storage.getProduto(req.params.id);
+      if (!produto) {
+        return res.status(404).json({ message: "Produto não encontrado" });
+      }
+      res.json(produto);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar produto" });
+    }
+  });
+
+  app.get("/api/produtos/codigo/:codigo", async (req, res) => {
+    try {
+      const produto = await storage.getProdutoByCodigo(req.params.codigo);
+      if (!produto) {
+        return res.status(404).json({ message: "Produto não encontrado" });
+      }
+      res.json(produto);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar produto por código" });
+    }
+  });
+
+  app.post("/api/produtos", async (req, res) => {
+    try {
+      const data = insertProdutoSchema.parse(req.body);
+      const produto = await storage.createProduto(data);
+      res.status(201).json(produto);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Dados inválidos" });
+    }
+  });
+
+  app.put("/api/produtos/:id", async (req, res) => {
+    try {
+      const produto = await storage.updateProduto(req.params.id, req.body);
+      if (!produto) {
+        return res.status(404).json({ message: "Produto não encontrado" });
+      }
+      res.json(produto);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Erro ao atualizar produto" });
+    }
+  });
+
+  app.delete("/api/produtos/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteProduto(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Produto não encontrado" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao deletar produto" });
+    }
+  });
+
+  // ==================== CLIENTES ====================
+  app.get("/api/clientes", async (_req, res) => {
+    try {
+      const clientes = await storage.getClientes();
+      res.json(clientes);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar clientes" });
+    }
+  });
+
+  app.get("/api/clientes/:id", async (req, res) => {
+    try {
+      const cliente = await storage.getCliente(req.params.id);
+      if (!cliente) {
+        return res.status(404).json({ message: "Cliente não encontrado" });
+      }
+      res.json(cliente);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar cliente" });
+    }
+  });
+
+  app.post("/api/clientes", async (req, res) => {
+    try {
+      const data = insertClienteSchema.parse(req.body);
+      const cliente = await storage.createCliente(data);
+      res.status(201).json(cliente);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Dados inválidos" });
+    }
+  });
+
+  app.put("/api/clientes/:id", async (req, res) => {
+    try {
+      const cliente = await storage.updateCliente(req.params.id, req.body);
+      if (!cliente) {
+        return res.status(404).json({ message: "Cliente não encontrado" });
+      }
+      res.json(cliente);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Erro ao atualizar cliente" });
+    }
+  });
+
+  app.delete("/api/clientes/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteCliente(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Cliente não encontrado" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao deletar cliente" });
     }
   });
 

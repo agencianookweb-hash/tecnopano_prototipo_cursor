@@ -12,7 +12,8 @@ import {
   LogOut,
   QrCode,
   Factory,
-  ArrowDownToLine
+  ArrowDownToLine,
+  ShoppingCart
 } from "lucide-react";
 
 const menuItems = [
@@ -23,7 +24,9 @@ const menuItems = [
   { icon: ClipboardList, label: "Triagem", href: "/separacao" },
   { icon: Factory, label: "Produção", href: "/producao" },
   { icon: Box, label: "Entrada Estoque", href: "/estoque/entrada" },
-  // Keeping original links for context, though we are focusing on the flow above
+  { icon: Package, label: "Produtos", href: "/produtos" },
+  { icon: ShoppingCart, label: "Clientes", href: "/clientes" },
+  { icon: Truck, label: "Fornecedores", href: "/fornecedores" },
   { icon: Users, label: "Equipe", href: "/equipe" },
   { icon: Settings, label: "Configurações", href: "/configuracoes" },
 ];

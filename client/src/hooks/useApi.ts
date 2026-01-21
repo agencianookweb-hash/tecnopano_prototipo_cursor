@@ -1,75 +1,36 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import * as api from '@/lib/api';
 import type {
   Fornecedor,
-  InsertFornecedor,
   Coleta,
-  InsertColeta,
   Lote,
-  InsertLote,
   Separacao,
-  InsertSeparacao,
   Producao,
-  InsertProducao,
   Estoque,
+  Produto,
+  Cliente,
+  InsertFornecedor,
+  InsertColeta,
+  InsertLote,
+  InsertSeparacao,
+  InsertProducao,
   InsertEstoque,
-} from "@shared/schema";
-
-const API_BASE = "/api";
-
-// ==================== FETCH HELPERS ====================
-async function fetchApi<T>(endpoint: string): Promise<T> {
-  const response = await fetch(`${API_BASE}${endpoint}`);
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
-  }
-  return response.json();
-}
-
-async function postApi<T>(endpoint: string, data: unknown): Promise<T> {
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
-  }
-  return response.json();
-}
-
-async function putApi<T>(endpoint: string, data: unknown): Promise<T> {
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
-  }
-  return response.json();
-}
-
-async function deleteApi(endpoint: string): Promise<void> {
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
-  }
-}
+  InsertProduto,
+  InsertCliente,
+} from '@shared/schema';
 
 // ==================== FORNECEDORES ====================
 export function useFornecedores() {
   return useQuery({
-    queryKey: ["fornecedores"],
-    queryFn: () => fetchApi<Fornecedor[]>("/fornecedores"),
+    queryKey: ['fornecedores'],
+    queryFn: api.getFornecedores,
   });
 }
 
 export function useFornecedor(id: string) {
   return useQuery({
-    queryKey: ["fornecedores", id],
-    queryFn: () => fetchApi<Fornecedor>(`/fornecedores/${id}`),
+    queryKey: ['fornecedores', id],
+    queryFn: () => api.getFornecedor(id),
     enabled: !!id,
   });
 }
@@ -77,10 +38,9 @@ export function useFornecedor(id: string) {
 export function useCreateFornecedor() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: InsertFornecedor) =>
-      postApi<Fornecedor>("/fornecedores", data),
+    mutationFn: api.createFornecedor,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["fornecedores"] });
+      queryClient.invalidateQueries({ queryKey: ['fornecedores'] });
     },
   });
 }
@@ -89,9 +49,10 @@ export function useUpdateFornecedor() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<InsertFornecedor> }) =>
-      putApi<Fornecedor>(`/fornecedores/${id}`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["fornecedores"] });
+      api.updateFornecedor(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['fornecedores'] });
+      queryClient.invalidateQueries({ queryKey: ['fornecedores', variables.id] });
     },
   });
 }
@@ -99,9 +60,9 @@ export function useUpdateFornecedor() {
 export function useDeleteFornecedor() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => deleteApi(`/fornecedores/${id}`),
+    mutationFn: api.deleteFornecedor,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["fornecedores"] });
+      queryClient.invalidateQueries({ queryKey: ['fornecedores'] });
     },
   });
 }
@@ -109,15 +70,15 @@ export function useDeleteFornecedor() {
 // ==================== COLETAS ====================
 export function useColetas() {
   return useQuery({
-    queryKey: ["coletas"],
-    queryFn: () => fetchApi<Coleta[]>("/coletas"),
+    queryKey: ['coletas'],
+    queryFn: api.getColetas,
   });
 }
 
 export function useColeta(id: string) {
   return useQuery({
-    queryKey: ["coletas", id],
-    queryFn: () => fetchApi<Coleta>(`/coletas/${id}`),
+    queryKey: ['coletas', id],
+    queryFn: () => api.getColeta(id),
     enabled: !!id,
   });
 }
@@ -125,9 +86,10 @@ export function useColeta(id: string) {
 export function useCreateColeta() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: InsertColeta) => postApi<Coleta>("/coletas", data),
+    mutationFn: api.createColeta,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["coletas"] });
+      queryClient.invalidateQueries({ queryKey: ['coletas'] });
+      queryClient.invalidateQueries({ queryKey: ['stats', 'dashboard'] });
     },
   });
 }
@@ -136,9 +98,11 @@ export function useUpdateColeta() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<InsertColeta> }) =>
-      putApi<Coleta>(`/coletas/${id}`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["coletas"] });
+      api.updateColeta(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['coletas'] });
+      queryClient.invalidateQueries({ queryKey: ['coletas', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['stats', 'dashboard'] });
     },
   });
 }
@@ -146,9 +110,10 @@ export function useUpdateColeta() {
 export function useDeleteColeta() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => deleteApi(`/coletas/${id}`),
+    mutationFn: api.deleteColeta,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["coletas"] });
+      queryClient.invalidateQueries({ queryKey: ['coletas'] });
+      queryClient.invalidateQueries({ queryKey: ['stats', 'dashboard'] });
     },
   });
 }
@@ -156,23 +121,23 @@ export function useDeleteColeta() {
 // ==================== LOTES ====================
 export function useLotes() {
   return useQuery({
-    queryKey: ["lotes"],
-    queryFn: () => fetchApi<Lote[]>("/lotes"),
+    queryKey: ['lotes'],
+    queryFn: api.getLotes,
   });
 }
 
 export function useLote(id: string) {
   return useQuery({
-    queryKey: ["lotes", id],
-    queryFn: () => fetchApi<Lote>(`/lotes/${id}`),
+    queryKey: ['lotes', id],
+    queryFn: () => api.getLote(id),
     enabled: !!id,
   });
 }
 
 export function useLoteByQRCode(qrCode: string) {
   return useQuery({
-    queryKey: ["lotes", "qrcode", qrCode],
-    queryFn: () => fetchApi<Lote>(`/lotes/qrcode/${qrCode}`),
+    queryKey: ['lotes', 'qrcode', qrCode],
+    queryFn: () => api.getLoteByQRCode(qrCode),
     enabled: !!qrCode,
   });
 }
@@ -180,9 +145,10 @@ export function useLoteByQRCode(qrCode: string) {
 export function useCreateLote() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: InsertLote) => postApi<Lote>("/lotes", data),
+    mutationFn: api.createLote,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lotes"] });
+      queryClient.invalidateQueries({ queryKey: ['lotes'] });
+      queryClient.invalidateQueries({ queryKey: ['stats', 'dashboard'] });
     },
   });
 }
@@ -191,9 +157,11 @@ export function useUpdateLote() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<InsertLote> }) =>
-      putApi<Lote>(`/lotes/${id}`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lotes"] });
+      api.updateLote(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['lotes'] });
+      queryClient.invalidateQueries({ queryKey: ['lotes', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['stats', 'dashboard'] });
     },
   });
 }
@@ -201,23 +169,15 @@ export function useUpdateLote() {
 // ==================== SEPARAÇÃO ====================
 export function useSeparacoes() {
   return useQuery({
-    queryKey: ["separacoes"],
-    queryFn: () => fetchApi<Separacao[]>("/separacoes"),
-  });
-}
-
-export function useSeparacao(id: string) {
-  return useQuery({
-    queryKey: ["separacoes", id],
-    queryFn: () => fetchApi<Separacao>(`/separacoes/${id}`),
-    enabled: !!id,
+    queryKey: ['separacoes'],
+    queryFn: api.getSeparacoes,
   });
 }
 
 export function useSeparacoesByLote(loteId: string) {
   return useQuery({
-    queryKey: ["separacoes", "lote", loteId],
-    queryFn: () => fetchApi<Separacao[]>(`/separacoes/lote/${loteId}`),
+    queryKey: ['separacoes', 'lote', loteId],
+    queryFn: () => api.getSeparacoesByLote(loteId),
     enabled: !!loteId,
   });
 }
@@ -225,11 +185,12 @@ export function useSeparacoesByLote(loteId: string) {
 export function useCreateSeparacao() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: InsertSeparacao) =>
-      postApi<Separacao>("/separacoes", data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["separacoes"] });
-      queryClient.invalidateQueries({ queryKey: ["lotes"] });
+    mutationFn: api.createSeparacao,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['separacoes'] });
+      queryClient.invalidateQueries({ queryKey: ['lotes'] });
+      queryClient.invalidateQueries({ queryKey: ['lotes', data.loteId] });
+      queryClient.invalidateQueries({ queryKey: ['stats', 'dashboard'] });
     },
   });
 }
@@ -237,23 +198,15 @@ export function useCreateSeparacao() {
 // ==================== PRODUÇÃO ====================
 export function useProducoes() {
   return useQuery({
-    queryKey: ["producoes"],
-    queryFn: () => fetchApi<Producao[]>("/producoes"),
-  });
-}
-
-export function useProducao(id: string) {
-  return useQuery({
-    queryKey: ["producoes", id],
-    queryFn: () => fetchApi<Producao>(`/producoes/${id}`),
-    enabled: !!id,
+    queryKey: ['producoes'],
+    queryFn: api.getProducoes,
   });
 }
 
 export function useProducoesByLote(loteId: string) {
   return useQuery({
-    queryKey: ["producoes", "lote", loteId],
-    queryFn: () => fetchApi<Producao[]>(`/producoes/lote/${loteId}`),
+    queryKey: ['producoes', 'lote', loteId],
+    queryFn: () => api.getProducoesByLote(loteId),
     enabled: !!loteId,
   });
 }
@@ -261,10 +214,12 @@ export function useProducoesByLote(loteId: string) {
 export function useCreateProducao() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: InsertProducao) => postApi<Producao>("/producoes", data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["producoes"] });
-      queryClient.invalidateQueries({ queryKey: ["lotes"] });
+    mutationFn: api.createProducao,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['producoes'] });
+      queryClient.invalidateQueries({ queryKey: ['lotes'] });
+      queryClient.invalidateQueries({ queryKey: ['lotes', data.loteId] });
+      queryClient.invalidateQueries({ queryKey: ['stats', 'dashboard'] });
     },
   });
 }
@@ -273,9 +228,12 @@ export function useUpdateProducao() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<InsertProducao> }) =>
-      putApi<Producao>(`/producoes/${id}`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["producoes"] });
+      api.updateProducao(id, data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['producoes'] });
+      queryClient.invalidateQueries({ queryKey: ['lotes'] });
+      queryClient.invalidateQueries({ queryKey: ['lotes', data.loteId] });
+      queryClient.invalidateQueries({ queryKey: ['stats', 'dashboard'] });
     },
   });
 }
@@ -283,44 +241,131 @@ export function useUpdateProducao() {
 // ==================== ESTOQUE ====================
 export function useEstoques() {
   return useQuery({
-    queryKey: ["estoques"],
-    queryFn: () => fetchApi<Estoque[]>("/estoques"),
-  });
-}
-
-export function useEstoque(id: string) {
-  return useQuery({
-    queryKey: ["estoques", id],
-    queryFn: () => fetchApi<Estoque>(`/estoques/${id}`),
-    enabled: !!id,
+    queryKey: ['estoques'],
+    queryFn: api.getEstoques,
   });
 }
 
 export function useCreateEstoque() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: InsertEstoque) => postApi<Estoque>("/estoques", data),
+    mutationFn: api.createEstoque,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["estoques"] });
-      queryClient.invalidateQueries({ queryKey: ["lotes"] });
+      queryClient.invalidateQueries({ queryKey: ['estoques'] });
+      queryClient.invalidateQueries({ queryKey: ['stats', 'dashboard'] });
+    },
+  });
+}
+
+// ==================== PRODUTOS ====================
+export function useProdutos() {
+  return useQuery({
+    queryKey: ['produtos'],
+    queryFn: api.getProdutos,
+  });
+}
+
+export function useProduto(id: string) {
+  return useQuery({
+    queryKey: ['produtos', id],
+    queryFn: () => api.getProduto(id),
+    enabled: !!id,
+  });
+}
+
+export function useProdutoByCodigo(codigo: string) {
+  return useQuery({
+    queryKey: ['produtos', 'codigo', codigo],
+    queryFn: () => api.getProdutoByCodigo(codigo),
+    enabled: !!codigo,
+  });
+}
+
+export function useCreateProduto() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.createProduto,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['produtos'] });
+    },
+  });
+}
+
+export function useUpdateProduto() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<InsertProduto> }) =>
+      api.updateProduto(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['produtos'] });
+      queryClient.invalidateQueries({ queryKey: ['produtos', variables.id] });
+    },
+  });
+}
+
+export function useDeleteProduto() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.deleteProduto,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['produtos'] });
+    },
+  });
+}
+
+// ==================== CLIENTES ====================
+export function useClientes() {
+  return useQuery({
+    queryKey: ['clientes'],
+    queryFn: api.getClientes,
+  });
+}
+
+export function useCliente(id: string) {
+  return useQuery({
+    queryKey: ['clientes', id],
+    queryFn: () => api.getCliente(id),
+    enabled: !!id,
+  });
+}
+
+export function useCreateCliente() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.createCliente,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clientes'] });
+    },
+  });
+}
+
+export function useUpdateCliente() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<InsertCliente> }) =>
+      api.updateCliente(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['clientes'] });
+      queryClient.invalidateQueries({ queryKey: ['clientes', variables.id] });
+    },
+  });
+}
+
+export function useDeleteCliente() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.deleteCliente,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clientes'] });
     },
   });
 }
 
 // ==================== DASHBOARD STATS ====================
-export interface DashboardStats {
-  totalColetas: number;
-  coletasPendentes: number;
-  coletasRealizadas: number;
-  lotesEmProcessamento: number;
-  producoesEmAndamento: number;
-  lotesCriticos: number;
-}
-
 export function useDashboardStats() {
   return useQuery({
-    queryKey: ["stats", "dashboard"],
-    queryFn: () => fetchApi<DashboardStats>("/stats/dashboard"),
+    queryKey: ['stats', 'dashboard'],
+    queryFn: api.getDashboardStats,
     refetchInterval: 30000, // Atualiza a cada 30 segundos
   });
 }

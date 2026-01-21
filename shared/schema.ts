@@ -148,12 +148,39 @@ export const insertProducaoSchema = createInsertSchema(producao).omit({
 export type InsertProducao = z.infer<typeof insertProducaoSchema>;
 export type Producao = typeof producao.$inferSelect;
 
+// ==================== PRODUTOS ====================
+export const produtos = pgTable("produtos", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  codigo: text("codigo").notNull().unique(),
+  nome: text("nome").notNull(),
+  descricao: text("descricao"),
+  categoria: text("categoria"), // panos, toalhas, lencois, etc
+  unidadeMedida: text("unidade_medida").default("unidade"), // unidade, kg, m2
+  precoVenda: decimal("preco_venda", { precision: 10, scale: 2 }),
+  precoCusto: decimal("preco_custo", { precision: 10, scale: 2 }),
+  pesoMedio: decimal("peso_medio", { precision: 10, scale: 2 }), // peso médio por unidade
+  estoqueMinimo: integer("estoque_minimo").default(0),
+  ativo: boolean("ativo").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertProdutoSchema = createInsertSchema(produtos).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertProduto = z.infer<typeof insertProdutoSchema>;
+export type Produto = typeof produtos.$inferSelect;
+
 // ==================== ESTOQUE ====================
 export const estoque = pgTable("estoque", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  produtoId: varchar("produto_id").references(() => produtos.id), // Referência ao produto
   producaoId: varchar("producao_id").references(() => producao.id),
   loteId: varchar("lote_id").notNull().references(() => lotes.id),
-  tipoProduto: text("tipo_produto").notNull(),
+  tipoProduto: text("tipo_produto").notNull(), // Mantido para compatibilidade
   quantidade: integer("quantidade").notNull(),
   peso: decimal("peso", { precision: 10, scale: 2 }).notNull(),
   localizacao: text("localizacao").notNull(),
@@ -170,3 +197,80 @@ export const insertEstoqueSchema = createInsertSchema(estoque).omit({
 
 export type InsertEstoque = z.infer<typeof insertEstoqueSchema>;
 export type Estoque = typeof estoque.$inferSelect;
+
+// ==================== CLIENTES ====================
+export const clientes = pgTable("clientes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  nome: text("nome").notNull(),
+  razaoSocial: text("razao_social"),
+  cnpj: text("cnpj"),
+  cpf: text("cpf"),
+  tipo: text("tipo").notNull().default("fisica"), // fisica, juridica
+  endereco: text("endereco"),
+  cidade: text("cidade"),
+  estado: text("estado"),
+  cep: text("cep"),
+  telefone: text("telefone"),
+  email: text("email"),
+  contato: text("contato"),
+  observacoes: text("observacoes"),
+  ativo: boolean("ativo").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertClienteSchema = createInsertSchema(clientes).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertCliente = z.infer<typeof insertClienteSchema>;
+export type Cliente = typeof clientes.$inferSelect;
+
+// ==================== VENDAS/PEDIDOS ====================
+export const vendas = pgTable("vendas", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  clienteId: varchar("cliente_id").notNull().references(() => clientes.id),
+  numeroPedido: text("numero_pedido").notNull().unique(),
+  dataVenda: timestamp("data_venda").defaultNow(),
+  dataEntrega: timestamp("data_entrega"),
+  status: text("status").notNull().default("pendente"), // pendente, confirmado, em_producao, pronto, entregue, cancelado
+  valorTotal: decimal("valor_total", { precision: 10, scale: 2 }).notNull(),
+  desconto: decimal("desconto", { precision: 10, scale: 2 }).default("0"),
+  valorFinal: decimal("valor_final", { precision: 10, scale: 2 }).notNull(),
+  observacoes: text("observacoes"),
+  createdBy: varchar("created_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertVendaSchema = createInsertSchema(vendas).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertVenda = z.infer<typeof insertVendaSchema>;
+export type Venda = typeof vendas.$inferSelect;
+
+// ==================== ITENS DE VENDA ====================
+export const itensVenda = pgTable("itens_venda", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  vendaId: varchar("venda_id").notNull().references(() => vendas.id, { onDelete: 'cascade' }),
+  produtoId: varchar("produto_id").notNull().references(() => produtos.id),
+  quantidade: integer("quantidade").notNull(),
+  precoUnitario: decimal("preco_unitario", { precision: 10, scale: 2 }).notNull(),
+  desconto: decimal("desconto", { precision: 10, scale: 2 }).default("0"),
+  subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
+  observacoes: text("observacoes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertItemVendaSchema = createInsertSchema(itensVenda).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertItemVenda = z.infer<typeof insertItemVendaSchema>;
+export type ItemVenda = typeof itensVenda.$inferSelect;

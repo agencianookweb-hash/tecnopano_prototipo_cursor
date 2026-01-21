@@ -5,7 +5,11 @@ import {
   type Lote, type InsertLote,
   type Separacao, type InsertSeparacao,
   type Producao, type InsertProducao,
-  type Estoque, type InsertEstoque
+  type Estoque, type InsertEstoque,
+  type Produto, type InsertProduto,
+  type Cliente, type InsertCliente,
+  type Venda, type InsertVenda,
+  type ItemVenda, type InsertItemVenda
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -54,6 +58,34 @@ export interface IStorage {
   getEstoque(id: string): Promise<Estoque | undefined>;
   getEstoques(): Promise<Estoque[]>;
   createEstoque(estoque: InsertEstoque): Promise<Estoque>;
+
+  // Produtos
+  getProduto(id: string): Promise<Produto | undefined>;
+  getProdutoByCodigo(codigo: string): Promise<Produto | undefined>;
+  getProdutos(): Promise<Produto[]>;
+  createProduto(produto: InsertProduto): Promise<Produto>;
+  updateProduto(id: string, produto: Partial<InsertProduto>): Promise<Produto | undefined>;
+  deleteProduto(id: string): Promise<boolean>;
+
+  // Clientes
+  getCliente(id: string): Promise<Cliente | undefined>;
+  getClientes(): Promise<Cliente[]>;
+  createCliente(cliente: InsertCliente): Promise<Cliente>;
+  updateCliente(id: string, cliente: Partial<InsertCliente>): Promise<Cliente | undefined>;
+  deleteCliente(id: string): Promise<boolean>;
+
+  // Vendas
+  getVenda(id: string): Promise<Venda | undefined>;
+  getVendas(): Promise<Venda[]>;
+  getVendasByCliente(clienteId: string): Promise<Venda[]>;
+  createVenda(venda: InsertVenda): Promise<Venda>;
+  updateVenda(id: string, venda: Partial<InsertVenda>): Promise<Venda | undefined>;
+  deleteVenda(id: string): Promise<boolean>;
+
+  // Itens de Venda
+  getItensVenda(vendaId: string): Promise<ItemVenda[]>;
+  createItemVenda(item: InsertItemVenda): Promise<ItemVenda>;
+  deleteItemVenda(id: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -64,6 +96,10 @@ export class MemStorage implements IStorage {
   private separacoes: Map<string, Separacao>;
   private producoes: Map<string, Producao>;
   private estoques: Map<string, Estoque>;
+  private produtos: Map<string, Produto>;
+  private clientes: Map<string, Cliente>;
+  private vendas: Map<string, Venda>;
+  private itensVenda: Map<string, ItemVenda>;
 
   constructor() {
     this.users = new Map();
@@ -73,6 +109,10 @@ export class MemStorage implements IStorage {
     this.separacoes = new Map();
     this.producoes = new Map();
     this.estoques = new Map();
+    this.produtos = new Map();
+    this.clientes = new Map();
+    this.vendas = new Map();
+    this.itensVenda = new Map();
     this.seedData();
   }
 
@@ -403,6 +443,176 @@ export class MemStorage implements IStorage {
       createdAt: new Date(),
     });
   }
+
+  // ==================== PRODUTOS ====================
+  async getProduto(id: string): Promise<Produto | undefined> {
+    return this.produtos.get(id);
+  }
+
+  async getProdutoByCodigo(codigo: string): Promise<Produto | undefined> {
+    return Array.from(this.produtos.values()).find(p => p.codigo === codigo);
+  }
+
+  async getProdutos(): Promise<Produto[]> {
+    return Array.from(this.produtos.values());
+  }
+
+  async createProduto(insertProduto: InsertProduto): Promise<Produto> {
+    const id = randomUUID();
+    const produto: Produto = {
+      ...insertProduto,
+      id,
+      ativo: insertProduto.ativo ?? true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.produtos.set(id, produto);
+    return produto;
+  }
+
+  async updateProduto(id: string, data: Partial<InsertProduto>): Promise<Produto | undefined> {
+    const produto = this.produtos.get(id);
+    if (!produto) return undefined;
+
+    const updated: Produto = {
+      ...produto,
+      ...data,
+      updatedAt: new Date(),
+    };
+    this.produtos.set(id, updated);
+    return updated;
+  }
+
+  async deleteProduto(id: string): Promise<boolean> {
+    return this.produtos.delete(id);
+  }
+
+  // ==================== CLIENTES ====================
+  async getCliente(id: string): Promise<Cliente | undefined> {
+    return this.clientes.get(id);
+  }
+
+  async getClientes(): Promise<Cliente[]> {
+    return Array.from(this.clientes.values());
+  }
+
+  async createCliente(insertCliente: InsertCliente): Promise<Cliente> {
+    const id = randomUUID();
+    const cliente: Cliente = {
+      ...insertCliente,
+      id,
+      tipo: insertCliente.tipo ?? 'fisica',
+      ativo: insertCliente.ativo ?? true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.clientes.set(id, cliente);
+    return cliente;
+  }
+
+  async updateCliente(id: string, data: Partial<InsertCliente>): Promise<Cliente | undefined> {
+    const cliente = this.clientes.get(id);
+    if (!cliente) return undefined;
+
+    const updated: Cliente = {
+      ...cliente,
+      ...data,
+      updatedAt: new Date(),
+    };
+    this.clientes.set(id, updated);
+    return updated;
+  }
+
+  async deleteCliente(id: string): Promise<boolean> {
+    return this.clientes.delete(id);
+  }
+
+  // ==================== VENDAS ====================
+  async getVenda(id: string): Promise<Venda | undefined> {
+    return this.vendas.get(id);
+  }
+
+  async getVendas(): Promise<Venda[]> {
+    return Array.from(this.vendas.values());
+  }
+
+  async getVendasByCliente(clienteId: string): Promise<Venda[]> {
+    return Array.from(this.vendas.values()).filter(v => v.clienteId === clienteId);
+  }
+
+  async createVenda(insertVenda: InsertVenda): Promise<Venda> {
+    const id = randomUUID();
+    const venda: Venda = {
+      ...insertVenda,
+      id,
+      status: insertVenda.status ?? 'pendente',
+      desconto: insertVenda.desconto ?? '0',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.vendas.set(id, venda);
+    return venda;
+  }
+
+  async updateVenda(id: string, data: Partial<InsertVenda>): Promise<Venda | undefined> {
+    const venda = this.vendas.get(id);
+    if (!venda) return undefined;
+
+    const updated: Venda = {
+      ...venda,
+      ...data,
+      updatedAt: new Date(),
+    };
+    this.vendas.set(id, updated);
+    return updated;
+  }
+
+  async deleteVenda(id: string): Promise<boolean> {
+    // Deletar itens da venda também
+    Array.from(this.itensVenda.entries())
+      .filter(([_, item]) => item.vendaId === id)
+      .forEach(([itemId]) => this.itensVenda.delete(itemId));
+    
+    return this.vendas.delete(id);
+  }
+
+  // ==================== ITENS DE VENDA ====================
+  async getItensVenda(vendaId: string): Promise<ItemVenda[]> {
+    return Array.from(this.itensVenda.values()).filter(item => item.vendaId === vendaId);
+  }
+
+  async createItemVenda(insertItemVenda: InsertItemVenda): Promise<ItemVenda> {
+    const id = randomUUID();
+    const item: ItemVenda = {
+      ...insertItemVenda,
+      id,
+      desconto: insertItemVenda.desconto ?? '0',
+      createdAt: new Date(),
+    };
+    this.itensVenda.set(id, item);
+    return item;
+  }
+
+  async deleteItemVenda(id: string): Promise<boolean> {
+    return this.itensVenda.delete(id);
+  }
 }
 
-export const storage = new MemStorage();
+// Usar PostgreSQL se DATABASE_URL estiver configurada, senão usar MemStorage
+let storageInstance: IStorage;
+
+if (process.env.DATABASE_URL) {
+  try {
+    console.log('🗄️  Usando PostgreSQL como storage');
+    const { PostgresStorage } = require('./postgres-storage');
+    storageInstance = new PostgresStorage();
+  } catch (error) {
+    console.error('❌ Erro ao carregar PostgreSQL, usando MemStorage:', error);
+    storageInstance = new MemStorage();
+  }
+} else {
+  console.log('💾 Usando MemStorage (desenvolvimento)');
+  storageInstance = new MemStorage();
+}
+
+export const storage = storageInstance;
