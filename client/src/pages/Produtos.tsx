@@ -137,7 +137,6 @@ export default function Produtos() {
                   <TableHead>Acabamento</TableHead>
                   <TableHead>Cor</TableHead>
                   <TableHead>Medida</TableHead>
-                  <TableHead>Nota Fiscal</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right pr-6">Ações</TableHead>
                 </TableRow>
@@ -145,7 +144,7 @@ export default function Produtos() {
               <TableBody>
                 {paginatedProdutos.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                       Nenhum produto encontrado
                     </TableCell>
                   </TableRow>
@@ -157,7 +156,6 @@ export default function Produtos() {
                       <TableCell>{produto.acabamento || "-"}</TableCell>
                       <TableCell>{produto.cor || "-"}</TableCell>
                       <TableCell>{produto.medida || produto.unidadeMedida || "-"}</TableCell>
-                      <TableCell>{produto.notaFiscal || "-"}</TableCell>
                       <TableCell>
                         <Badge 
                           className={
