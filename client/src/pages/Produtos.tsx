@@ -29,9 +29,11 @@ export default function Produtos() {
   };
 
   const filteredProdutos = produtos?.filter(p => 
-    p.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.categoria?.toLowerCase().includes(searchTerm.toLowerCase())
+    p.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.descricao?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.codigo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.acabamento?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.cor?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
   return (
@@ -54,7 +56,7 @@ export default function Produtos() {
             <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input 
-                placeholder="Buscar por nome, código ou categoria..." 
+                placeholder="Buscar por descrição, acabamento, cor ou ID..." 
                 className="pl-9 bg-muted/30 border-muted"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -93,13 +95,12 @@ export default function Produtos() {
             <Table>
               <TableHeader className="bg-muted/30">
                 <TableRow>
-                  <TableHead className="pl-6">Código</TableHead>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Unidade</TableHead>
-                  <TableHead>Preço Venda</TableHead>
-                  <TableHead>Preço Custo</TableHead>
-                  <TableHead>Estoque Mín.</TableHead>
+                  <TableHead className="pl-6">ID</TableHead>
+                  <TableHead>Descrição do Produto</TableHead>
+                  <TableHead>Acabamento</TableHead>
+                  <TableHead>Cor</TableHead>
+                  <TableHead>Medida</TableHead>
+                  <TableHead>Nota Fiscal</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right pr-6">Ações</TableHead>
                 </TableRow>
@@ -107,24 +108,19 @@ export default function Produtos() {
               <TableBody>
                 {filteredProdutos.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                       Nenhum produto encontrado
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredProdutos.map((produto) => (
                     <TableRow key={produto.id} className="hover:bg-muted/10 transition-colors">
-                      <TableCell className="pl-6 py-4 font-mono text-sm">{produto.codigo}</TableCell>
-                      <TableCell className="font-medium">{produto.nome}</TableCell>
-                      <TableCell>{produto.categoria || "-"}</TableCell>
-                      <TableCell>{produto.unidadeMedida || "unidade"}</TableCell>
-                      <TableCell>
-                        {produto.precoVenda ? `R$ ${Number(produto.precoVenda).toFixed(2)}` : "-"}
-                      </TableCell>
-                      <TableCell>
-                        {produto.precoCusto ? `R$ ${Number(produto.precoCusto).toFixed(2)}` : "-"}
-                      </TableCell>
-                      <TableCell>{produto.estoqueMinimo || 0}</TableCell>
+                      <TableCell className="pl-6 py-4 font-mono text-sm">{produto.codigo || produto.id.substring(0, 8)}</TableCell>
+                      <TableCell className="font-medium">{produto.nome || produto.descricao || "-"}</TableCell>
+                      <TableCell>{produto.acabamento || "-"}</TableCell>
+                      <TableCell>{produto.cor || "-"}</TableCell>
+                      <TableCell>{produto.medida || produto.unidadeMedida || "-"}</TableCell>
+                      <TableCell>{produto.notaFiscal || "-"}</TableCell>
                       <TableCell>
                         <Badge 
                           className={

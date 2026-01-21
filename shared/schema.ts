@@ -154,6 +154,11 @@ export const produtos = pgTable("produtos", {
   codigo: text("codigo").notNull().unique(),
   nome: text("nome").notNull(),
   descricao: text("descricao"),
+  acabamento: text("acabamento"), // Corte-Reto, Zig-Zag, Overlock, etc
+  cor: text("cor"), // Branco, Variado, Verde, etc
+  medida: text("medida"), // 20x20 Cm, 30x30 Cm, etc
+  foto: text("foto"), // URL da foto
+  notaFiscal: text("nota_fiscal"), // Número da nota fiscal
   categoria: text("categoria"), // panos, toalhas, lencois, etc
   unidadeMedida: text("unidade_medida").default("unidade"), // unidade, kg, m2
   precoVenda: decimal("preco_venda", { precision: 10, scale: 2 }),
